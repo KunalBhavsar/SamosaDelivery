@@ -20,7 +20,7 @@ public class APIClient {
         if (retrofit == null) {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+            logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
             httpClient.addInterceptor(logging);
 
             OkHttpClient client = httpClient.build();

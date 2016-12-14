@@ -15,4 +15,7 @@ public interface ServerAPIInterface {
     @POST("app/emp/auth.php")
     Call<LoginResponse> login(@Body LoginRequest loginRequest);
 
+    @POST("app/emp/auth.php")
+    Call<LoginResponse> loginNew(@Query("username") String username, @Query("password") String password);
+
 }
