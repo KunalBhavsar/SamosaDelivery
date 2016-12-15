@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -64,6 +65,9 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        mUsernameView.setText("marshal.chettiar");
+        mPasswordView.setText("rapid123");
+
         Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -121,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
             // perform the user login attempt.
             showProgress(true);
 
-            APIClient.getClient().loginNew(username, password).enqueue(new Callback<LoginResponse>() {
+            APIClient.getClient().login(username, password).enqueue(new Callback<LoginResponse>() {
                 @Override
                 public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                     showProgress(false);
@@ -129,6 +133,10 @@ public class LoginActivity extends AppCompatActivity {
                     switch (loginResponse.getStatusCode()) {
                         case "200" :
                             SPrefUtils.setIntegerPreference(mAppContext, SPrefUtils.LOGIN_STATUS, KeyConstants.LOGIN_STATUS_LOGGED_IN);
+                            Intent intent = new Intent(mActivityContext, MapsActivity.class);
+                            mActivityContext.startActivity(intent);
+                            finish();
+
                             Toast.makeText(mActivityContext, "Welcome " + loginResponse.getName() + "!", Toast.LENGTH_SHORT).show();
                             //TODO: go to next page
                             break;
