@@ -1,5 +1,6 @@
 package co.rapiddelivery.src;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -10,6 +11,8 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -32,6 +35,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import co.rapiddelivery.services.LocationService;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         LocationSource.OnLocationChangedListener,
         LocationListener,
@@ -46,6 +51,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String TAG = MapsActivity.class.getSimpleName();
     private static final float DEFAULT_ZOOM = 1.0f;
 
+    private Switch switchState;
+
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
 
@@ -58,9 +65,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        switchState = (Switch) findViewById(R.id.btn_switch);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         buildGoogleApiClient();
@@ -70,6 +78,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
+
+        switchState.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                Intent intent = new Intent(MapsActivity.this, LocationService.class);
+                if(b) {
+                    startService(intent);
+                } else {
+                    stopService(intent);
+                }
+            }
+        });
     }
 
 
