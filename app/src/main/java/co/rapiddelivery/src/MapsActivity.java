@@ -44,8 +44,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 1000 * 60 * 30;
-    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 1000 * 10 * 3;
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 1000 * 100;
+    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 1000 * 10;
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
     private static final String TAG = MapsActivity.class.getSimpleName();
@@ -60,6 +60,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationRequest mLocationRequest;
     private Location mCurrentLocation;
     private CameraPosition mCameraPosition;
+
+    private long lastmillis;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,6 +213,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         if (mLocationPermissionGranted) {
+            if (mCurrentLocation != null) {
+                LatLng location = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+            }
+
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
         }
@@ -238,11 +245,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
          */
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
 
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
     }
 
     @Override
     public void onLocationChanged(Location location) {
+        if (lastmillis == 0) {
+            Log.i(TAG, "On location changed : " + location.toString());
+        }
+        else {
+            Log.i(TAG, "On location changed : " + location.toString() + " after " + (System.currentTimeMillis() - lastmillis));
+        }
+        lastmillis = System.currentTimeMillis();
         mCurrentLocation = location;
         updateMarkers();
     }
