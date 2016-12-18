@@ -20,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import co.rapiddelivery.network.APIClient;
-import co.rapiddelivery.network.LoginRequest;
 import co.rapiddelivery.network.LoginResponse;
 import co.rapiddelivery.utils.KeyConstants;
 import co.rapiddelivery.utils.SPrefUtils;
