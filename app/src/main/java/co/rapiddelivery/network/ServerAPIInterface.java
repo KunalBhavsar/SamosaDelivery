@@ -15,5 +15,7 @@ public interface ServerAPIInterface {
     @POST("app/emp/auth.php")
     Call<LoginResponse> login(@Field("username") String username, @Field("password") String password);
 
+    @FormUrlEncoded
+    @POST("app/emp/update_location.php")
     Call<ServerResponseBase> submitLocation(@Field("username") String username, @Field("password") String password, @Field("battery") int batteryState, @Field("lat") String lat, @Field("long") String log);
 }

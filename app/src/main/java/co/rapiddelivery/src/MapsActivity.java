@@ -15,6 +15,12 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.firebase.jobdispatcher.Constraint;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.Trigger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -35,6 +41,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import co.rapiddelivery.services.LocationJobService;
 import co.rapiddelivery.services.LocationService;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
@@ -50,6 +57,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String KEY_LOCATION = "location";
     private static final String TAG = MapsActivity.class.getSimpleName();
     private static final float DEFAULT_ZOOM = 1.0f;
+    private static final String LOCATION_JOB = "location_service";
 
     private Switch switchState;
 
@@ -81,14 +89,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
 
+        final FirebaseJobDispatcher firebaseJobDispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(MapsActivity.this));
+        final Job locationJob = firebaseJobDispatcher.newJobBuilder()
+                .setService(LocationJobService.class)
+                .setTag(LOCATION_JOB)
+                .setRecurring(true)
+                .setLifetime(Lifetime.FOREVER)
+                .setTrigger(Trigger.executionWindow(2, 25))
+                .build();
+
+        // TODO: 18/12/16 Check gps is on
         switchState.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                Intent intent = new Intent(MapsActivity.this, LocationService.class);
                 if(b) {
-                    startService(intent);
+                    firebaseJobDispatcher.mustSchedule(locationJob);
                 } else {
-                    stopService(intent);
+                    firebaseJobDispatcher.cancel(LOCATION_JOB);
                 }
             }
         });
