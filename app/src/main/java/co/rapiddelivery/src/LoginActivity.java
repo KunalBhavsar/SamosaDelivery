@@ -14,8 +14,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.support.design.widget.TextInputLayout;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +23,7 @@ import co.rapiddelivery.network.APIClient;
 import co.rapiddelivery.network.LoginResponse;
 import co.rapiddelivery.utils.KeyConstants;
 import co.rapiddelivery.utils.SPrefUtils;
+import co.rapiddelivery.views.CustomTextInputEditText;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,8 +35,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
     // UI references.
-    private EditText mUsernameView;
-    private EditText mPasswordView;
+    private TextInputLayout mInputLayoutUsername;
+    private TextInputLayout mInputLayoutPassword;
+    private CustomTextInputEditText mEdtUsername;
+    private CustomTextInputEditText mEdtPassword;
     private View mProgressView;
     private View mLoginFormView;
 
@@ -50,10 +53,11 @@ public class LoginActivity extends AppCompatActivity {
         mActivityContext = this;
 
         // Set up the login form.
-        mUsernameView = (EditText) findViewById(R.id.username);
-
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mInputLayoutUsername = (TextInputLayout) findViewById(R.id.txt_input_layout_username);
+        mInputLayoutPassword = (TextInputLayout) findViewById(R.id.txt_input_layout_password);
+        mEdtUsername = (CustomTextInputEditText) findViewById(R.id.edt_username);
+        mEdtPassword = (CustomTextInputEditText) findViewById(R.id.edt_password);
+        mEdtPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
@@ -64,8 +68,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        mUsernameView.setText("marshal.chettiar");
-        mPasswordView.setText("rapid123");
+        mEdtUsername.setText("marshal.chettiar");
+        mEdtPassword.setText("rapid123");
 
         Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
         mSignInButton.setOnClickListener(new OnClickListener() {
@@ -87,31 +91,31 @@ public class LoginActivity extends AppCompatActivity {
     private void attemptLogin() {
 
         // Reset errors.
-        mUsernameView.setError(null);
-        mPasswordView.setError(null);
+        mEdtUsername.setError(null);
+        mEdtPassword.setError(null);
 
         // Store values at the time of the login attempt.
-        String username = mUsernameView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        String username = mEdtUsername.getText().toString();
+        String password = mEdtPassword.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
+            mEdtPassword.setError(getString(R.string.error_invalid_password));
+            focusView = mEdtPassword;
             cancel = true;
         }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(username)) {
-            mUsernameView.setError(getString(R.string.error_field_required));
-            focusView = mUsernameView;
+            mEdtUsername.setError(getString(R.string.error_field_required));
+            focusView = mEdtUsername;
             cancel = true;
         } else if (!isEmailValid(username)) {
-            mUsernameView.setError(getString(R.string.error_invalid_username));
-            focusView = mUsernameView;
+            mEdtUsername.setError(getString(R.string.error_invalid_username));
+            focusView = mEdtUsername;
             cancel = true;
         }
 
@@ -132,12 +136,11 @@ public class LoginActivity extends AppCompatActivity {
                     switch (loginResponse.getStatusCode()) {
                         case "200" :
                             SPrefUtils.setIntegerPreference(mAppContext, SPrefUtils.LOGIN_STATUS, KeyConstants.LOGIN_STATUS_LOGGED_IN);
-                            Intent intent = new Intent(mActivityContext, MapsActivity.class);
+                            Intent intent = new Intent(mActivityContext, TabActivity.class);
                             mActivityContext.startActivity(intent);
                             finish();
 
                             Toast.makeText(mActivityContext, "Welcome " + loginResponse.getName() + "!", Toast.LENGTH_SHORT).show();
-                            //TODO: go to next page
                             break;
                         case "400" :
                             Toast.makeText(mActivityContext, loginResponse.getMessage(), Toast.LENGTH_SHORT).show();

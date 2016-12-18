@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RapidDelivery</string>
+    <string name="app_name">Rapid Delivery</string>
 
     <!-- Strings related to login -->
     <string name="prompt_username">Username</string>
@@ -14,4 +14,23 @@
         completions."
     </string>
     <string name="title_activity_maps">Map</string>
+    <string name="title_activity_tabbed">TabbedActivity</string>
+    <string name="action_switch_to_map">View on Map</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_homescreen">Rapid Delivery</string>
+
+    <string name="font_libre_franklin_bold">fonts/libre_franklin_bold.ttf</string>
+    <string name="font_libre_franklin_medium">fonts/libre_franklin_medium.ttf</string>
+    <string name="font_libre_franklin_regular">fonts/libre_franklin_regular.ttf</string>
+
+    <!-- Login -->
+    <string name="hint_username">Enter username..</string>
+    <string name="hint_password">Enter password..</string>
+
+    <!-- Temp -->
+    <string name="action_add_favourite">Add to Favourites</string>
+    <string name="action_play_next">Play Next</string>
+    <string name="backdrop_title">LOVE MUSIC</string>
+    <string name="backdrop_subtitle">This season top 20 albums</string>
 </resources>

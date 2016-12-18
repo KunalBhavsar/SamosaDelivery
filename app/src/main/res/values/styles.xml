@@ -1,11 +1,106 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorBackground">@color/colorPrimaryDark</item>
+        <item name="android:textColorPrimary">@color/light_grey</item>
+        <item name="android:textColorSecondary">@color/dark_grey</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="textview_large_text">
+        <item name="android:textSize">@dimen/_22sp</item>
+        <item name="android:textColor">@color/light_grey</item>
+        <item name="font">@string/font_libre_franklin_regular</item>
+    </style>
+
+    <style name="textview_large_medium_text">
+        <item name="android:textSize">@dimen/_20sp</item>
+        <item name="android:textColor">@color/light_grey</item>
+        <item name="font">@string/font_libre_franklin_regular</item>
+    </style>
+
+    <style name="textview_medium_text">
+        <item name="android:textSize">@dimen/_18sp</item>
+        <item name="android:textColor">@color/light_grey</item>
+        <item name="font">@string/font_libre_franklin_regular</item>
+    </style>
+
+    <style name="textview_medium_small_text">
+        <item name="android:textSize">@dimen/_16sp</item>
+        <item name="android:textColor">@color/light_grey</item>
+        <item name="font">@string/font_libre_franklin_regular</item>
+    </style>
+
+    <style name="textview_small_text">
+        <item name="android:textSize">@dimen/_14sp</item>
+        <item name="android:textColor">@color/light_grey</item>
+        <item name="font">@string/font_libre_franklin_regular</item>
+    </style>
+
+    <style name="textview_very_small_text">
+        <item name="android:textSize">@dimen/_12sp</item>
+        <item name="android:textColor">@color/light_grey</item>
+        <item name="font">@string/font_libre_franklin_regular</item>
+    </style>
+
+    <style name="textview_header_text">
+        <item name="android:textSize">@dimen/_20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/light_grey</item>
+        <item name="font">@string/font_libre_franklin_bold</item>
+    </style>
+
+    <style name="textview_subheader_text">
+        <item name="android:textSize">@dimen/_18sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/light_grey</item>
+        <item name="font">@string/font_libre_franklin_medium</item>
+    </style>
+
+    <style name="textview_small_allcaps_text" parent="textview_small_text">
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="text_input_layout_floating_lable_style" parent="textview_small_text">
+        <item name="android:textColor">@color/dark_grey</item>
+    </style>
+
+    <style name="text_input_layout_error_lable_style" parent="textview_small_text">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="text_input_layout_style" parent="textview_large_medium_text">
+        <item name="android:textColorHint">@color/dark_grey</item>
+        <item name="android:paddingLeft">@dimen/_10dp</item>
+        <item name="android:paddingRight">@dimen/_10dp</item>
+        <item name="android:paddingTop">@dimen/_5dp</item>
+        <item name="android:paddingBottom">@dimen/_5dp</item>
+        <item name="android:background">@drawable/rounded_rect_white</item>
+    </style>
+
+    <style name="edittext_style" parent="textview_large_medium_text">
+        <item name="android:padding">10dp</item>
+        <!--<item name="android:background">@drawable/edittext_background</item>-->
+        <item name="android:textColorHint">@color/darker_grey</item>
+        <item name="android:textColor">@color/colorPrimaryLight</item>
+        <item name="android:textCursorDrawable">@null</item>
+    </style>
+
+    <style name="button_orange" parent="textview_medium_text">
+        <item name="android:background">@drawable/rounded_rect_orange</item>
+        <item name="android:textColor">@color/grey_dfdfdf</item>
+        <item name="font">@string/font_libre_franklin_regular</item>
     </style>
 
 </resources>

@@ -2,4 +2,71 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="appbar_padding_top">8dp</dimen>
+
+    <dimen name="rounded_corner_size">25dip</dimen>
+
+    <dimen name="_12sp">12sp</dimen>
+    <dimen name="_14sp">14sp</dimen>
+    <dimen name="_16sp">16sp</dimen>
+    <dimen name="_18sp">18sp</dimen>
+    <dimen name="_20sp">20sp</dimen>
+    <dimen name="_22sp">22sp</dimen>
+    <dimen name="_28sp">28sp</dimen>
+
+    <dimen name="_1dp">1dp</dimen>
+    <dimen name="_2dp">2dp</dimen>
+    <dimen name="_3dp">3dp</dimen>
+    <dimen name="_4dp">4dp</dimen>
+    <dimen name="_5dp">5dp</dimen>
+    <dimen name="_8dp">8dp</dimen>
+    <dimen name="_10dp">10dp</dimen>
+    <dimen name="_12dp">12dp</dimen>
+    <dimen name="_14dp">14dp</dimen>
+    <dimen name="_15dp">15dp</dimen>
+    <dimen name="_16dp">16dp</dimen>
+    <dimen name="_20dp">20dp</dimen>
+    <dimen name="_22dp">22dp</dimen>
+    <dimen name="_25dp">25dp</dimen>
+    <dimen name="_30dp">30dp</dimen>
+    <dimen name="_35dp">35dp</dimen>
+    <dimen name="_40dp">40dp</dimen>
+    <dimen name="_45dp">45dp</dimen>
+    <dimen name="_48dp">48dp</dimen>
+    <dimen name="_50dp">50dp</dimen>
+    <dimen name="_52dp">52dp</dimen>
+    <dimen name="_53dp">53dp</dimen>
+    <dimen name="_55dp">55dp</dimen>
+    <dimen name="_56dp">56dp</dimen>
+    <dimen name="_60dp">60dp</dimen>
+    <dimen name="_70dp">70dp</dimen>
+    <dimen name="_75dp">75dp</dimen>
+    <dimen name="_90dp">90dp</dimen>
+    <dimen name="_100dp">100dp</dimen>
+    <dimen name="_120dp">120dp</dimen>
+    <dimen name="_130dp">130dp</dimen>
+    <dimen name="_140dp">140dp</dimen>
+    <dimen name="_150dp">150dp</dimen>
+    <dimen name="_200dp">200dp</dimen>
+    <dimen name="_250dp">250dp</dimen>
+    <dimen name="_300dp">300dp</dimen>
+    <dimen name="_400dp">400dp</dimen>
+    <dimen name="_80dp">80dp</dimen>
+
+    <!-- Temporary items. -->
+    <dimen name="item_offset">10dp</dimen>
+    <dimen name="detail_backdrop_height">250dp</dimen>
+    <dimen name="backdrop_title">30dp</dimen>
+    <dimen name="backdrop_subtitle">18dp</dimen>
+    <dimen name="card_margin">5dp</dimen>
+    <dimen name="card_album_radius">5dp</dimen>
+    <dimen name="album_cover_height">160dp</dimen>
+    <dimen name="album_title_padding">10dp</dimen>
+    <dimen name="album_title">15dp</dimen>
+    <dimen name="songs_count_padding_bottom">5dp</dimen>
+    <dimen name="songs_count">12dp</dimen>
+    <dimen name="ic_album_overflow_width">20dp</dimen>
+    <dimen name="ic_album_overflow_height">30dp</dimen>
+    <dimen name="ic_album_overflow_margin_top">10dp</dimen>
 </resources>
