@@ -3,6 +3,8 @@
     package="co.rapiddelivery.src">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -71,6 +73,15 @@
             android:label="@string/title_activity_homescreen"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+
+        <receiver android:name="co.rapiddelivery.receiver.AlarmReceiver" />
+        <receiver
+            android:name="co.rapiddelivery.receiver.BootReceiver"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

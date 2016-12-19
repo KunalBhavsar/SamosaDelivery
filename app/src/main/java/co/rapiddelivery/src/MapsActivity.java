@@ -41,6 +41,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import co.rapiddelivery.receiver.AlarmReceiver;
 import co.rapiddelivery.services.LocationJobService;
 import co.rapiddelivery.services.LocationService;
 
@@ -102,10 +103,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         switchState.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                //Intent intent = new Intent(MapsActivity.this, LocationService.class);
+                AlarmReceiver alarmReceiver = new AlarmReceiver();
                 if(b) {
-                    firebaseJobDispatcher.mustSchedule(locationJob);
+                    alarmReceiver.setDailyUpdateAlarm(getApplicationContext());
+                    //startService(intent);
+                    //firebaseJobDispatcher.mustSchedule(locationJob);
                 } else {
-                    firebaseJobDispatcher.cancel(LOCATION_JOB);
+                    alarmReceiver.cancelAlarm(getApplicationContext());
+                    //stopService(intent);
+                    //firebaseJobDispatcher.cancel(LOCATION_JOB);
                 }
             }
         });

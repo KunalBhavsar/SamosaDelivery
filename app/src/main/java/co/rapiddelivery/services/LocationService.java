@@ -20,7 +20,13 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.Date;
+
 import co.rapiddelivery.network.APIClient;
+import co.rapiddelivery.network.ServerResponseBase;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /** Service to send current location
  * Created by Shraddha on 16/12/16.
@@ -62,8 +68,6 @@ public class LocationService extends Service implements LocationListener, Google
     protected void createLocationRequest() {
         Log.e(TAG, "loc req created ");
         locationRequest = new LocationRequest();
-        locationRequest.setInterval(10000);
-        locationRequest.setFastestInterval(5000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
@@ -88,7 +92,7 @@ public class LocationService extends Service implements LocationListener, Google
         }
     }
 
-    private void handlelocation() {
+    private void handleLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -100,19 +104,46 @@ public class LocationService extends Service implements LocationListener, Google
             return;
         }
 
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
-        Log.i(TAG, "Location update started ..............: ");
-
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        Log.e(TAG, "FusedLocationApi lat " + mLastLocation.getLatitude() + " long " + mLastLocation.getLongitude());
-        APIClient.getClient().submitLocation("marshal.chettiar","", 80, "", "");
-        stopSelf();
+        Log.e(TAG, "FusedLocationApi lat " + mLastLocation.getLatitude() + " long " + mLastLocation.getLongitude() + " time" + new Date().toString());
+        APIClient.getClient().submitLocation("marshal.chettiar", "", 80, "", "");
+        //stopSelf();
+
+        // TODO: 18/12/16 testing - whether this works in background or device is off
+        APIClient.getClient().submitLocation("marshal.chettiar", "rapid123", 80, "19.237188", "72.844136")
+                .enqueue(new Callback<ServerResponseBase>() {
+                    @Override
+                    public void onResponse(Call<ServerResponseBase> call, Response<ServerResponseBase> response) {
+                        ServerResponseBase serverResponse = response.body();
+                        Log.e(TAG, serverResponse.getMessage());
+                        stopSelf();
+                    }
+
+                    @Override
+                    public void onFailure(Call<ServerResponseBase> call, Throwable t) {
+                        Log.e(TAG, t.getMessage(), t);
+                        stopSelf();
+                    }
+                });
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.e(TAG, "connection established");
-        handlelocation();
+        //handleLocation();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
+        Log.i(TAG, "Location update started ..............: ");
+
     }
 
     @Override
@@ -127,6 +158,7 @@ public class LocationService extends Service implements LocationListener, Google
 
     @Override
     public void onLocationChanged(Location location) {
+        handleLocation();
         Log.e(TAG, "onLocationChanged lat " + location.getLatitude() + " long " + location.getLongitude());
     }
 }
