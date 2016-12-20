@@ -1,13 +1,12 @@
 package co.rapiddelivery.src;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -16,7 +15,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
 import com.firebase.jobdispatcher.Job;
@@ -24,13 +22,9 @@ import com.firebase.jobdispatcher.Lifetime;
 import com.firebase.jobdispatcher.Trigger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.PlaceLikelihood;
-import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -44,18 +38,12 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-<<<<<<< Updated upstream
-import co.rapiddelivery.receiver.AlarmReceiver;
-=======
-import java.util.ArrayList;
 import java.util.List;
 
 import co.rapiddelivery.RDApplication;
-import co.rapiddelivery.adapters.DeliveryAdapter;
 import co.rapiddelivery.models.DeliveryModel;
->>>>>>> Stashed changes
+import co.rapiddelivery.receiver.AlarmReceiver;
 import co.rapiddelivery.services.LocationJobService;
-import co.rapiddelivery.services.LocationService;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         LocationSource.OnLocationChangedListener,
