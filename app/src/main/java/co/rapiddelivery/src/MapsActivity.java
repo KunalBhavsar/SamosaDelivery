@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
@@ -31,6 +32,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.PlaceLikelihood;
 import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
@@ -38,10 +40,20 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+<<<<<<< Updated upstream
 import co.rapiddelivery.receiver.AlarmReceiver;
+=======
+import java.util.ArrayList;
+import java.util.List;
+
+import co.rapiddelivery.RDApplication;
+import co.rapiddelivery.adapters.DeliveryAdapter;
+import co.rapiddelivery.models.DeliveryModel;
+>>>>>>> Stashed changes
 import co.rapiddelivery.services.LocationJobService;
 import co.rapiddelivery.services.LocationService;
 
@@ -72,10 +84,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private long lastmillis;
 
+    private List<DeliveryModel> deliveryModels;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        deliveryModels = ((RDApplication)getApplication()).getDeliverySetModel().getDeliveryModels();
+
         switchState = (Switch) findViewById(R.id.btn_switch);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -291,35 +308,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         if (mLocationPermissionGranted) {
-            // Get the businesses and other points of interest located
-            // nearest to the device's current location.
-            @SuppressWarnings("MissingPermission")
-            PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi
-                    .getCurrentPlace(mGoogleApiClient, null);
-            result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
-                @Override
-                public void onResult(@NonNull PlaceLikelihoodBuffer likelyPlaces) {
-                    for (PlaceLikelihood placeLikelihood : likelyPlaces) {
-                        // Add a marker for each place near the device's current location, with an
-                        // info window showing place information.
-                        String attributions = (String) placeLikelihood.getPlace().getAttributions();
-                        String snippet = (String) placeLikelihood.getPlace().getAddress();
-                        if (attributions != null) {
-                            snippet = snippet + "\n" + attributions;
-                        }
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
-                        mMap.addMarker(new MarkerOptions()
-                                .position(placeLikelihood.getPlace().getLatLng())
-                                .title((String) placeLikelihood.getPlace().getName())
-                                .snippet(snippet));
-                    }
-                    // Release the place likelihood buffer.
-                    likelyPlaces.release();
+            //the include method will calculate the min and max bound.
+            builder.include(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
+
+            for (DeliveryModel deliveryModel :
+                    deliveryModels) {
+                LatLng latLng = new LatLng(deliveryModel.getLatitude(), deliveryModel.getLongitude());
+                builder.include(latLng);
+                mMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .title(deliveryModel.getName())
+                        .snippet(deliveryModel.getAddress()));
+            }
+
+            LatLngBounds bounds = builder.build();
+
+            int width = getResources().getDisplayMetrics().widthPixels;
+            int height = getResources().getDisplayMetrics().heightPixels;
+            int padding = (int) (width * 0.10); // offset from edges of the map 12% of screen
+
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+
+            mMap.animateCamera(cu);
+
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    Toast.makeText(MapsActivity.this, "Clicked Marker : " + marker.getTitle(), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
+
+            mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                @Override
+                public void onInfoWindowClick(Marker marker) {
+                    Toast.makeText(MapsActivity.this, "Window info clicked : " + marker.getTitle(), Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
-            //TODO: change it to default location
-            // Add a marker in Sydney and move the camera
             LatLng sydney = new LatLng(-34, 151);
             mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));

@@ -11,6 +11,10 @@ public class DeliverySetModel {
     private int deliverySetId;
     private List<DeliveryModel> deliveryModels;
 
+    public DeliverySetModel() {
+        deliveryModels = new ArrayList<>();
+    }
+
     public int getDeliverySetId() {
         return deliverySetId;
     }

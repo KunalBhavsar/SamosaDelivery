@@ -27,6 +27,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.rapiddelivery.RDApplication;
 import co.rapiddelivery.adapters.DeliveryAdapter;
 import co.rapiddelivery.models.DeliveryModel;
 
@@ -105,36 +106,7 @@ public class TabActivity extends AppCompatActivity {
         private static final String ARG_SECTION_NUMBER = "section_number";
         private RecyclerView recyclerView;
         private DeliveryAdapter adapter;
-        private List<DeliveryModel> albumList;
-
-        public PlaceholderFragment() {
-            albumList = new ArrayList<>();
-
-            for (int i = 0; i < 12; i++) {
-                DeliveryModel deliveryModel = new DeliveryModel();
-                switch (i % 3) {
-                    case 0 :
-                        deliveryModel.setName("Kunal Bhavsar");
-                        deliveryModel.setAddress("11, ABBK, Mahajan Wadi, Opp. Central Railway Workshop, Parel - Mumbai");
-                        deliveryModel.setPincode("400012");
-                        deliveryModel.setCodAmount((i + 1) * 19);
-                        break;
-                    case 1 :
-                        deliveryModel.setName("Shraddha Pednekar");
-                        deliveryModel.setAddress("27, Jagruti Building, Devipada, near National Park, Boriwali - Mumbai");
-                        deliveryModel.setPincode("400012");
-                        deliveryModel.setCodAmount((i + 1) * 13);
-                        break;
-                    case 2:
-                        deliveryModel.setName("Yojana Rangnekar");
-                        deliveryModel.setAddress("3, Shivaji Park, Dangal Road, Virar - Thane");
-                        deliveryModel.setPincode("471012");
-                        deliveryModel.setCodAmount((i + 1) * 17);
-                        break;
-                }
-                albumList.add(deliveryModel);
-            }
-        }
+        private List<DeliveryModel> deliveryModels;
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -154,7 +126,8 @@ public class TabActivity extends AppCompatActivity {
             View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
             recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
 
-            adapter = new DeliveryAdapter(this.getContext(), albumList);
+            deliveryModels = ((RDApplication)getActivity().getApplication()).getDeliverySetModel().getDeliveryModels();
+            adapter = new DeliveryAdapter(this.getContext(), deliveryModels);
 
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
             recyclerView.setLayoutManager(mLayoutManager);

@@ -14,6 +14,8 @@ public class DeliveryModel {
     private int status;
     private int paymentMode;
     private int priority;
+    private double latitude;
+    private double longitude;
 
     public String getTrackingNumber() {
         return trackingNumber;
@@ -85,5 +87,21 @@ public class DeliveryModel {
 
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }
