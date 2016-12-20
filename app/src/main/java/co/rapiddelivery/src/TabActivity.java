@@ -1,5 +1,8 @@
 package co.rapiddelivery.src;
 
+import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -30,6 +33,8 @@ import java.util.List;
 import co.rapiddelivery.RDApplication;
 import co.rapiddelivery.adapters.DeliveryAdapter;
 import co.rapiddelivery.models.DeliveryModel;
+import co.rapiddelivery.utils.KeyConstants;
+import co.rapiddelivery.utils.SPrefUtils;
 
 public class TabActivity extends AppCompatActivity {
 
@@ -48,10 +53,17 @@ public class TabActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
+
+    private Activity mActivityContext;
+    private Context mAppContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
+
+        mActivityContext = this;
+        mAppContext = getApplicationContext();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -83,7 +95,8 @@ public class TabActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_logout) {
+            onLogoutClicked();
             return true;
         }
         if (id == R.id.action_switch_to_map) {
@@ -93,6 +106,17 @@ public class TabActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void onLogoutClicked() {
+        SPrefUtils.setIntegerPreference(mAppContext, SPrefUtils.LOGIN_STATUS, KeyConstants.LOGIN_STATUS_BLANK);
+        SPrefUtils.setStringPreference(mAppContext, SPrefUtils.LOGGEDIN_USER_DETAILS, null);
+        ((RDApplication)getApplication()).setAppOwnerData(null);
+        ((RDApplication)getApplication()).setDeliverySetModel(null);
+        ((RDApplication)getApplication()).setPickupSetModel(null);
+        Intent intent = new Intent(mActivityContext, LoginActivity.class);
+        mActivityContext.startActivity(intent);
+        finish();
     }
 
     /**

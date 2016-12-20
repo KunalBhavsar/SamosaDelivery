@@ -19,6 +19,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import co.rapiddelivery.RDApplication;
 import co.rapiddelivery.network.APIClient;
 import co.rapiddelivery.network.LoginResponse;
 import co.rapiddelivery.utils.KeyConstants;
@@ -49,9 +52,26 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         mAppContext = this.getApplicationContext();
         mActivityContext = this;
 
+        int loginStatus = SPrefUtils.getIntegerPreference(mAppContext, SPrefUtils.LOGIN_STATUS, KeyConstants.LOGIN_STATUS_BLANK);
+
+        if (loginStatus == KeyConstants.LOGIN_STATUS_LOGGED_IN) {
+            String loggedInUserDetails = SPrefUtils.getStringPreference(mAppContext, SPrefUtils.LOGGEDIN_USER_DETAILS);
+
+            if (loggedInUserDetails != null) {
+                ((RDApplication)getApplication()).setAppOwnerData(new Gson().fromJson(loggedInUserDetails, LoginResponse.class));
+            }
+
+
+            Intent intent = new Intent(mActivityContext, TabActivity.class);
+            mActivityContext.startActivity(intent);
+            finish();
+
+            Toast.makeText(mActivityContext, "Welcome back " + RDApplication.getAppOwnerData().getName() + "!", Toast.LENGTH_SHORT).show();
+        }
         // Set up the login form.
         mInputLayoutUsername = (TextInputLayout) findViewById(R.id.txt_input_layout_username);
         mInputLayoutPassword = (TextInputLayout) findViewById(R.id.txt_input_layout_password);
@@ -136,6 +156,8 @@ public class LoginActivity extends AppCompatActivity {
                     switch (loginResponse.getStatusCode()) {
                         case "200" :
                             SPrefUtils.setIntegerPreference(mAppContext, SPrefUtils.LOGIN_STATUS, KeyConstants.LOGIN_STATUS_LOGGED_IN);
+                            SPrefUtils.setStringPreference(mAppContext, SPrefUtils.LOGGEDIN_USER_DETAILS, new Gson().toJson(loginResponse));
+
                             Intent intent = new Intent(mActivityContext, TabActivity.class);
                             mActivityContext.startActivity(intent);
                             finish();

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import co.rapiddelivery.models.DeliveryModel;
 import co.rapiddelivery.models.DeliverySetModel;
 import co.rapiddelivery.models.PickupSetModel;
+import co.rapiddelivery.network.LoginResponse;
 
 /**
  * Created by Kunal on 15/12/16.
@@ -18,6 +19,7 @@ public class RDApplication extends Application {
 
     private PickupSetModel pickupSetModel;
     private DeliverySetModel deliverySetModel;
+    private static LoginResponse appOwnerData;
 
     @Override
     public void onCreate() {
@@ -73,5 +75,16 @@ public class RDApplication extends Application {
 
     public void setDeliverySetModel(DeliverySetModel deliverySetModel) {
         this.deliverySetModel = deliverySetModel;
+    }
+
+    public static LoginResponse getAppOwnerData() {
+        if (appOwnerData == null) {
+            appOwnerData = new LoginResponse();
+        }
+        return appOwnerData;
+    }
+
+    public void setAppOwnerData(LoginResponse appOwnerData) {
+        this.appOwnerData = appOwnerData;
     }
 }
