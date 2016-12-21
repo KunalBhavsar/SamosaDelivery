@@ -18,10 +18,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <co.rapiddelivery.views.CustomTextView
+        android:id="@+id/txt_barcode_reading"
+        android:layout_below="@+id/txt_temp"
+        style="@style/textview_large_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <co.rapiddelivery.views.CustomButton
+        android:layout_below="@+id/txt_barcode_reading"
+        style="@style/button_orange"
+        android:id="@+id/btn_read_barcode"
+        android:layout_marginTop="@dimen/_10dp"
+        android:text="Read Barcode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <co.rapiddelivery.views.CustomButton
+        android:layout_below="@+id/txt_temp"
+        style="@style/button_orange"
+        android:id="@+id/btn_close_camera"
+        android:layout_marginTop="@dimen/_10dp"
+        android:visibility="gone"
+        android:text="Close camera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <co.rapiddelivery.views.CameraSourcePreview
         android:id="@+id/preview"
-        android:layout_below="@+id/txt_temp"
-        android:layout_marginTop="@dimen/_10dp"
+        android:layout_below="@+id/btn_close_camera"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -31,4 +57,6 @@
             android:layout_height="match_parent" />
 
     </co.rapiddelivery.views.CameraSourcePreview>
+
+
 </RelativeLayout>

@@ -4,6 +4,7 @@ import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.barcode.Barcode;
 
+import co.rapiddelivery.BarcodeReaderInterface;
 import co.rapiddelivery.views.GraphicOverlay;
 
 /**
@@ -12,14 +13,16 @@ import co.rapiddelivery.views.GraphicOverlay;
  */
 public class BarcodeTrackerFactory implements MultiProcessor.Factory<Barcode> {
     private GraphicOverlay mGraphicOverlay;
+    private BarcodeReaderInterface barcodeReaderInterface;
 
-    public BarcodeTrackerFactory(GraphicOverlay graphicOverlay) {
+    public BarcodeTrackerFactory(GraphicOverlay graphicOverlay, BarcodeReaderInterface barcodeReaderInterface) {
         mGraphicOverlay = graphicOverlay;
+        this.barcodeReaderInterface = barcodeReaderInterface;
     }
 
     @Override
     public Tracker<Barcode> create(Barcode barcode) {
         BarcodeGraphic graphic = new BarcodeGraphic(mGraphicOverlay);
-        return new GraphicTracker<>(mGraphicOverlay, graphic);
+        return new GraphicTracker<>(mGraphicOverlay, graphic, barcodeReaderInterface);
     }
 }
