@@ -18,4 +18,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <co.rapiddelivery.views.CameraSourcePreview
+        android:id="@+id/preview"
+        android:layout_below="@+id/txt_temp"
+        android:layout_marginTop="@dimen/_10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <co.rapiddelivery.views.GraphicOverlay
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </co.rapiddelivery.views.CameraSourcePreview>
 </RelativeLayout>

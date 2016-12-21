@@ -18,4 +18,38 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <co.rapiddelivery.views.TouchEventView
+        android:layout_below="@+id/txt_temp"
+        android:layout_marginTop="@dimen/_5dp"
+        android:id="@+id/view_sign_pad"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_100dp"
+        />
+
+    <Button
+        android:layout_below="@+id/view_sign_pad"
+        android:layout_marginTop="@dimen/_5dp"
+        android:id="@+id/btn_reset_drawing"
+        android:text="Reset"
+        android:textColor="@color/grey_00"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_below="@+id/btn_reset_drawing"
+        android:id="@+id/btn_capture_drawing"
+        android:layout_marginTop="@dimen/_5dp"
+        android:text="Capture"
+        android:textColor="@color/grey_00"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:layout_below="@+id/btn_capture_drawing"
+        android:layout_marginTop="@dimen/_5dp"
+        android:id="@+id/img_sign_output"
+        android:background="@android:color/white"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </RelativeLayout>
