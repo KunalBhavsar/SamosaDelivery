@@ -14,8 +14,8 @@ public class PickUpModel {
     private int numberOfShipments;
     private int expectedWeight;
     private int cutOffTime;
-    private double lat;
-    private double lon;
+    private double latitude;
+    private double longitude;
     private int status;
 
     public String getPickupNumber() {
@@ -82,27 +82,27 @@ public class PickUpModel {
         this.cutOffTime = cutOffTime;
     }
 
-    public double getLat() {
-        return lat;
-    }
-
-    public void setLat(double lat) {
-        this.lat = lat;
-    }
-
-    public double getLon() {
-        return lon;
-    }
-
-    public void setLon(double lon) {
-        this.lon = lon;
-    }
-
     public int getStatus() {
         return status;
     }
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }

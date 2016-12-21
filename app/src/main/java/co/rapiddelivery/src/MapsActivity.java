@@ -1,5 +1,8 @@
 package co.rapiddelivery.src;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -13,7 +16,6 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
@@ -32,6 +34,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -42,8 +45,10 @@ import java.util.List;
 
 import co.rapiddelivery.RDApplication;
 import co.rapiddelivery.models.DeliveryModel;
+import co.rapiddelivery.models.PickUpModel;
 import co.rapiddelivery.receiver.AlarmReceiver;
 import co.rapiddelivery.services.LocationJobService;
+import co.rapiddelivery.utils.KeyConstants;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         LocationSource.OnLocationChangedListener,
@@ -72,20 +77,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private long lastmillis;
 
-    private List<DeliveryModel> deliveryModels;
+    private Activity mActivityContext;
+    private Context mAppContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        deliveryModels = ((RDApplication)getApplication()).getDeliverySetModel().getDeliveryModels();
+        mActivityContext = this;
+        mAppContext = getApplicationContext();
 
         switchState = (Switch) findViewById(R.id.btn_switch);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        // getActionBar().setDisplayHomeAsUpEnabled(true);
 
         buildGoogleApiClient();
         mGoogleApiClient.connect();
@@ -301,6 +310,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //the include method will calculate the min and max bound.
             builder.include(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
 
+            List<DeliveryModel> deliveryModels = RDApplication.getDeliverySetModel().getDeliveryModels();
+
             for (DeliveryModel deliveryModel :
                     deliveryModels) {
                 LatLng latLng = new LatLng(deliveryModel.getLatitude(), deliveryModel.getLongitude());
@@ -308,7 +319,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.addMarker(new MarkerOptions()
                         .position(latLng)
                         .title(deliveryModel.getName())
-                        .snippet(deliveryModel.getAddress()));
+                        .snippet(deliveryModel.getAddress())
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)))
+                        .setTag(deliveryModel);
+            }
+
+            List<PickUpModel> pickUpModels = RDApplication.getPickupSetModel().getPickupSetModels();
+
+            for (PickUpModel pickUpModel :
+                    pickUpModels) {
+                LatLng latLng = new LatLng(pickUpModel.getLatitude(), pickUpModel.getLongitude());
+                builder.include(latLng);
+                mMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .title(pickUpModel.getName())
+                        .snippet(pickUpModel.getAddress())
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)))
+                        .setTag(pickUpModel);
             }
 
             LatLngBounds bounds = builder.build();
@@ -321,18 +348,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             mMap.animateCamera(cu);
 
-            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(Marker marker) {
-                    Toast.makeText(MapsActivity.this, "Clicked Marker : " + marker.getTitle(), Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-            });
-
             mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                 @Override
                 public void onInfoWindowClick(Marker marker) {
-                    Toast.makeText(MapsActivity.this, "Window info clicked : " + marker.getTitle(), Toast.LENGTH_SHORT).show();
+                    Object tag = marker.getTag();
+                    if (tag instanceof DeliveryModel) {
+                        DeliveryModel deliveryModel = (DeliveryModel) marker.getTag();
+                        Intent intent = new Intent(mActivityContext, DeliveryDetailsActivity.class);
+                        intent.putExtra(KeyConstants.INTENT_EXTRA_DELIVERY_NUMBER, deliveryModel.getTrackingNumber());
+                        mActivityContext.startActivity(intent);
+                    }
+                    else if (tag instanceof  PickUpModel) {
+                        PickUpModel pickUpModel = (PickUpModel) marker.getTag();
+                        Intent intent = new Intent(mActivityContext, PickUpDetailsActivity.class);
+                        intent.putExtra(KeyConstants.INTENT_EXTRA_PICKUP_NUMBER, pickUpModel.getPickupNumber());
+                        mActivityContext.startActivity(intent);
+                    }
                 }
             });
         } else {

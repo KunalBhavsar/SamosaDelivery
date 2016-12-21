@@ -1,5 +1,6 @@
 package co.rapiddelivery.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,7 +9,11 @@ import java.util.List;
 
 public class PickupSetModel {
     private int pickupSetId;
-    private List<PickupSetModel> pickupSetModels;
+    private List<PickUpModel> pickupSetModels;
+
+    public PickupSetModel() {
+        pickupSetModels = new ArrayList<>();
+    }
 
     public int getPickupSetId() {
         return pickupSetId;
@@ -18,11 +23,11 @@ public class PickupSetModel {
         this.pickupSetId = pickupSetId;
     }
 
-    public List<PickupSetModel> getPickupSetModels() {
+    public List<PickUpModel> getPickupSetModels() {
         return pickupSetModels;
     }
 
-    public void setPickupSetModels(List<PickupSetModel> pickupSetModels) {
+    public void setPickupSetModels(List<PickUpModel> pickupSetModels) {
         this.pickupSetModels = pickupSetModels;
     }
 }

@@ -32,7 +32,9 @@ import java.util.List;
 
 import co.rapiddelivery.RDApplication;
 import co.rapiddelivery.adapters.DeliveryAdapter;
+import co.rapiddelivery.adapters.PickUpAdapter;
 import co.rapiddelivery.models.DeliveryModel;
+import co.rapiddelivery.models.PickUpModel;
 import co.rapiddelivery.utils.KeyConstants;
 import co.rapiddelivery.utils.SPrefUtils;
 
@@ -129,8 +131,6 @@ public class TabActivity extends AppCompatActivity {
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
         private RecyclerView recyclerView;
-        private DeliveryAdapter adapter;
-        private List<DeliveryModel> deliveryModels;
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -150,13 +150,39 @@ public class TabActivity extends AppCompatActivity {
             View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
             recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
 
-            deliveryModels = ((RDApplication)getActivity().getApplication()).getDeliverySetModel().getDeliveryModels();
-            adapter = new DeliveryAdapter(this.getContext(), deliveryModels);
+            int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+            if (sectionNumber == 1) {
+                List<DeliveryModel> deliveryModels = RDApplication.getDeliverySetModel().getDeliveryModels();
+                DeliveryAdapter adapter = new DeliveryAdapter(this.getContext(), deliveryModels, new DeliveryAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(DeliveryModel deliveryModel) {
+                        Intent intent = new Intent(getActivity(), DeliveryDetailsActivity.class);
+                        intent.putExtra(KeyConstants.INTENT_EXTRA_DELIVERY_NUMBER, deliveryModel.getTrackingNumber());
+                        getActivity().startActivity(intent);
+                    }
+                });
 
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
-            recyclerView.setLayoutManager(mLayoutManager);
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
-            recyclerView.setAdapter(adapter);
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
+                recyclerView.setLayoutManager(mLayoutManager);
+                recyclerView.setItemAnimator(new DefaultItemAnimator());
+                recyclerView.setAdapter(adapter);
+            }
+            else if (sectionNumber == 2) {
+                List<PickUpModel> deliveryModels = RDApplication.getPickupSetModel().getPickupSetModels();
+                PickUpAdapter adapter = new PickUpAdapter(this.getContext(), deliveryModels, new PickUpAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(PickUpModel pickUpModel) {
+                        Intent intent = new Intent(getActivity(), PickUpDetailsActivity.class);
+                        intent.putExtra(KeyConstants.INTENT_EXTRA_PICKUP_NUMBER, pickUpModel.getPickupNumber());
+                        getActivity().startActivity(intent);
+                    }
+                });
+
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
+                recyclerView.setLayoutManager(mLayoutManager);
+                recyclerView.setItemAnimator(new DefaultItemAnimator());
+                recyclerView.setAdapter(adapter);
+            }
 
             return rootView;
         }

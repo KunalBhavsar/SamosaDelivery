@@ -11,4 +11,8 @@ public class KeyConstants {
     public static int LOGIN_STATUS_OTP_ENTERED = 2;
     public static int LOGIN_STATUS_PROFILE_FILLED = 3;
 
+    // Intent constants
+    public static String INTENT_EXTRA_DELIVERY_NUMBER = "delivery_number";
+    public static String INTENT_EXTRA_PICKUP_NUMBER = "pickup_number";
+
 }
