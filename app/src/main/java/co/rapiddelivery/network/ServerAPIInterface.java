@@ -1,5 +1,6 @@
 package co.rapiddelivery.network;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -18,4 +19,13 @@ public interface ServerAPIInterface {
     @FormUrlEncoded
     @POST("app/emp/update_location.php")
     Call<ServerResponseBase> submitLocation(@Field("username") String username, @Field("password") String password, @Field("battery") int batteryState, @Field("lat") String lat, @Field("long") String log);
+
+    @FormUrlEncoded
+    @POST("app/ops/drs.php")
+    Call<DRList> getDRList(@Field("username") String username, @Field("password") String password, @Field("emp_id") String empId);
+
+    @FormUrlEncoded
+    @POST("app/ops/drs.php")
+    Call<ResponseBody> getList(@Field("username") String username, @Field("password") String password, @Field("emp_id") String empId);
 }
+

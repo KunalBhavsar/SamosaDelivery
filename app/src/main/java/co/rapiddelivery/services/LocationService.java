@@ -2,9 +2,13 @@ package co.rapiddelivery.services;
 
 import android.Manifest;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -19,14 +23,19 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.gson.Gson;
 
 import java.util.Date;
 
 import co.rapiddelivery.network.APIClient;
+import co.rapiddelivery.network.LoginResponse;
 import co.rapiddelivery.network.ServerResponseBase;
+import co.rapiddelivery.utils.SPrefUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static co.rapiddelivery.utils.SPrefUtils.getStringPreference;
 
 /** Service to send current location
  * Created by Shraddha on 16/12/16.
@@ -37,6 +46,7 @@ public class LocationService extends Service implements LocationListener, Google
     private static final String TAG = LocationService.class.getSimpleName();
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest locationRequest;
+    private int batteryStatus;
 
     public LocationService() {
         super();
@@ -52,6 +62,7 @@ public class LocationService extends Service implements LocationListener, Google
     @Override
     public void onCreate() {
         super.onCreate();
+        registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         Log.e(TAG, "loc onCreate");
         // Create an instance of GoogleAPIClient.
         if (isGooglePlayServicesAvailable() && mGoogleApiClient == null) {
@@ -106,11 +117,13 @@ public class LocationService extends Service implements LocationListener, Google
 
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         Log.e(TAG, "FusedLocationApi lat " + mLastLocation.getLatitude() + " long " + mLastLocation.getLongitude() + " time" + new Date().toString());
-        APIClient.getClient().submitLocation("marshal.chettiar", "", 80, "", "");
+        String loginDetails = SPrefUtils.getStringPreference(this, SPrefUtils.LOGGEDIN_USER_DETAILS);
+        LoginResponse loginResponse = new Gson().fromJson(loginDetails, LoginResponse.class);
+
         //stopSelf();
 
         // TODO: 18/12/16 testing - whether this works in background or device is off
-        APIClient.getClient().submitLocation("marshal.chettiar", "rapid123", 80, "19.237188", "72.844136")
+        APIClient.getClient().submitLocation(loginResponse.getName(), loginResponse.getPassword(), batteryStatus, Double.toString(mLastLocation.getLatitude()), Double.toString(mLastLocation.getLongitude()))
                 .enqueue(new Callback<ServerResponseBase>() {
                     @Override
                     public void onResponse(Call<ServerResponseBase> call, Response<ServerResponseBase> response) {
@@ -161,4 +174,11 @@ public class LocationService extends Service implements LocationListener, Google
         handleLocation();
         Log.e(TAG, "onLocationChanged lat " + location.getLatitude() + " long " + location.getLongitude());
     }
+
+    private final BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver(){
+        @Override
+        public void onReceive(Context arg0, Intent intent) {
+            batteryStatus = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+        }
+    };
 }

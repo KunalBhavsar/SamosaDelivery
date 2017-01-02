@@ -1,10 +1,9 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:colorBackground">@color/colorPrimaryDark</item>
         <item name="android:textColorPrimary">@color/light_grey</item>
         <item name="android:textColorSecondary">@color/dark_grey</item>
     </style>
@@ -73,7 +72,7 @@
     </style>
 
     <style name="text_input_layout_floating_lable_style" parent="textview_small_text">
-        <item name="android:textColor">@color/dark_grey</item>
+        <item name="android:textColor">@color/colorPrimaryVeryLight</item>
     </style>
 
     <style name="text_input_layout_error_lable_style" parent="textview_small_text">
@@ -81,12 +80,11 @@
     </style>
 
     <style name="text_input_layout_style" parent="textview_large_medium_text">
-        <item name="android:textColorHint">@color/dark_grey</item>
+        <item name="android:textColorHint">@color/colorPrimary</item>
         <item name="android:paddingLeft">@dimen/_10dp</item>
         <item name="android:paddingRight">@dimen/_10dp</item>
         <item name="android:paddingTop">@dimen/_5dp</item>
         <item name="android:paddingBottom">@dimen/_5dp</item>
-        <item name="android:background">@drawable/rounded_rect_white</item>
     </style>
 
     <style name="edittext_style" parent="textview_large_medium_text">

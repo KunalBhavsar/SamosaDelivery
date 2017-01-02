@@ -115,8 +115,8 @@ public class LoginActivity extends AppCompatActivity {
         mEdtPassword.setError(null);
 
         // Store values at the time of the login attempt.
-        String username = mEdtUsername.getText().toString();
-        String password = mEdtPassword.getText().toString();
+        final String username = mEdtUsername.getText().toString();
+        final String password = mEdtPassword.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -155,6 +155,8 @@ public class LoginActivity extends AppCompatActivity {
                     LoginResponse loginResponse = response.body();
                     switch (loginResponse.getStatusCode()) {
                         case "200" :
+                            loginResponse.setPassword(password);
+                            loginResponse.setUserName(username);
                             SPrefUtils.setIntegerPreference(mAppContext, SPrefUtils.LOGIN_STATUS, KeyConstants.LOGIN_STATUS_LOGGED_IN);
                             SPrefUtils.setStringPreference(mAppContext, SPrefUtils.LOGGEDIN_USER_DETAILS, new Gson().toJson(loginResponse));
 

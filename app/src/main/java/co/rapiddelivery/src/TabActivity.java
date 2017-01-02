@@ -19,6 +19,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +27,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.TextView;
+
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +38,16 @@ import co.rapiddelivery.adapters.DeliveryAdapter;
 import co.rapiddelivery.adapters.PickUpAdapter;
 import co.rapiddelivery.models.DeliveryModel;
 import co.rapiddelivery.models.PickUpModel;
+import co.rapiddelivery.network.APIClient;
+import co.rapiddelivery.network.DRList;
+import co.rapiddelivery.network.LoginResponse;
+import co.rapiddelivery.network.ServerResponseBase;
 import co.rapiddelivery.utils.KeyConstants;
 import co.rapiddelivery.utils.SPrefUtils;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TabActivity extends AppCompatActivity {
 
@@ -55,15 +66,16 @@ public class TabActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
-
     private Activity mActivityContext;
     private Context mAppContext;
+    private LoadingDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
 
+        loadingDialog = LoadingDialog.getInstance();
         mActivityContext = this;
         mAppContext = getApplicationContext();
 
@@ -79,6 +91,7 @@ public class TabActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        getDRListFromServer();
     }
 
 
@@ -119,6 +132,38 @@ public class TabActivity extends AppCompatActivity {
         Intent intent = new Intent(mActivityContext, LoginActivity.class);
         mActivityContext.startActivity(intent);
         finish();
+    }
+
+    public void getDRListFromServer() {
+
+        String loginDetails = SPrefUtils.getStringPreference(this, SPrefUtils.LOGGEDIN_USER_DETAILS);
+        LoginResponse loginResponse = new Gson().fromJson(loginDetails, LoginResponse.class);
+
+        /*APIClient.getClient().getDRList(loginResponse.getName(), loginResponse.getPassword(), loginResponse.getEmp_id())
+                .enqueue(new Callback<DRList>() {
+                    @Override
+                    public void onResponse(Call<DRList> call, Response<DRList> response) {
+                        DRList drList = response.body();
+                    }
+
+                    @Override
+                    public void onFailure(Call<DRList> call, Throwable t) {
+
+                    }
+                });*/
+        Log.e("list", loginResponse.getUserName()+ " " +loginResponse.getPassword()+ " " + loginResponse.getEmp_id());
+        APIClient.getClient().getList(loginResponse.getUserName(), loginResponse.getPassword(), loginResponse.getEmp_id())
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        Log.e("list", response.code() + "  " + response.toString());
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
     }
 
     /**

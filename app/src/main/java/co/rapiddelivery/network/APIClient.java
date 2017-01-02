@@ -1,5 +1,7 @@
 package co.rapiddelivery.network;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -22,6 +24,7 @@ public class APIClient {
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
             httpClient.addInterceptor(logging);
+            httpClient.connectTimeout(2, TimeUnit.MINUTES);
 
             OkHttpClient client = httpClient.build();
             retrofit = new Retrofit.Builder()
