@@ -1,15 +1,11 @@
 package co.rapiddelivery.src;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -26,8 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.TextView;
-
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -39,18 +33,17 @@ import co.rapiddelivery.adapters.PickUpAdapter;
 import co.rapiddelivery.models.DeliveryModel;
 import co.rapiddelivery.models.PickUpModel;
 import co.rapiddelivery.network.APIClient;
-import co.rapiddelivery.network.DRList;
+import co.rapiddelivery.network.DeliveryResponseModel;
 import co.rapiddelivery.network.LoginResponse;
-import co.rapiddelivery.network.ServerResponseBase;
 import co.rapiddelivery.utils.KeyConstants;
 import co.rapiddelivery.utils.SPrefUtils;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class TabActivity extends AppCompatActivity {
 
+    private static final String TAG = TabActivity.class.getSimpleName();
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -65,6 +58,7 @@ public class TabActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private TabLayout tabLayout;
 
     private Activity mActivityContext;
     private Context mAppContext;
@@ -81,17 +75,12 @@ public class TabActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        getDRListFromServer();
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-        getDRListFromServer();
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
     }
 
 
@@ -126,9 +115,9 @@ public class TabActivity extends AppCompatActivity {
     private void onLogoutClicked() {
         SPrefUtils.setIntegerPreference(mAppContext, SPrefUtils.LOGIN_STATUS, KeyConstants.LOGIN_STATUS_BLANK);
         SPrefUtils.setStringPreference(mAppContext, SPrefUtils.LOGGEDIN_USER_DETAILS, null);
-        ((RDApplication)getApplication()).setAppOwnerData(null);
-        ((RDApplication)getApplication()).setDeliverySetModel(null);
-        ((RDApplication)getApplication()).setPickupSetModel(null);
+        RDApplication.setAppOwnerData(null);
+        RDApplication.setDeliveryModels(null);
+        RDApplication.setPickupSetModel(null);
         Intent intent = new Intent(mActivityContext, LoginActivity.class);
         mActivityContext.startActivity(intent);
         finish();
@@ -139,29 +128,50 @@ public class TabActivity extends AppCompatActivity {
         String loginDetails = SPrefUtils.getStringPreference(this, SPrefUtils.LOGGEDIN_USER_DETAILS);
         LoginResponse loginResponse = new Gson().fromJson(loginDetails, LoginResponse.class);
 
-        /*APIClient.getClient().getDRList(loginResponse.getName(), loginResponse.getPassword(), loginResponse.getEmp_id())
-                .enqueue(new Callback<DRList>() {
+        APIClient.getClient().getList(loginResponse.getUserName(), loginResponse.getPassword(), Integer.parseInt(loginResponse.getEmp_id()))
+                .enqueue(new Callback<DeliveryResponseModel>() {
                     @Override
-                    public void onResponse(Call<DRList> call, Response<DRList> response) {
-                        DRList drList = response.body();
+                    public void onResponse(Call<DeliveryResponseModel> call, Response<DeliveryResponseModel> response) {
+                        List<DeliveryModel> deliveryModels = new ArrayList<>();
+                        if (response != null) {
+                            DeliveryModel deliveryModel;
+                            for (DeliveryResponseModel.DeliveryModel deliveryModelFromServer : response.body().getDelivery()) {
+                                deliveryModel = new DeliveryModel();
+                                deliveryModel.setHeader(true);
+                                deliveryModel.setDeliveryNumber(deliveryModelFromServer.getDispatch_number());
+                                deliveryModels.add(deliveryModel);
+                                for (DeliveryResponseModel.DeliveryModel.ShipmentModel shipmentModel : deliveryModelFromServer.getShipments()) {
+                                    deliveryModel = new DeliveryModel();
+                                    deliveryModel.setPincode(shipmentModel.getPincode());
+                                    deliveryModel.setName(shipmentModel.getName());
+                                    deliveryModel.setAddress1(shipmentModel.getAddress_1());
+                                    deliveryModel.setAddress2(shipmentModel.getAddress_2());
+                                    deliveryModel.setAwb(shipmentModel.getAwb());
+                                    deliveryModel.setDispatchCount(shipmentModel.getDispatch_count());
+                                    deliveryModel.setFlow(shipmentModel.getFlow());
+                                    deliveryModel.setLat(shipmentModel.getLat());
+                                    deliveryModel.setLng(shipmentModel.getLng());
+                                    deliveryModel.setStatus(shipmentModel.getStatus());
+                                    deliveryModel.setValue(shipmentModel.getValue());
+                                    deliveryModel.setMode(shipmentModel.getMode());
+                                    deliveryModel.setHeader(false);
+                                    deliveryModel.setDeliveryNumber(deliveryModelFromServer.getDispatch_number());
+                                    deliveryModels.add(deliveryModel);
+                                }
+                            }
+                        }
+                        RDApplication.setDeliveryModels(deliveryModels);
+                        // Create the adapter that will return a fragment for each of the three
+                        // primary sections of the activity.
+                        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+                        mViewPager.setAdapter(mSectionsPagerAdapter);
+                        tabLayout.setupWithViewPager(mViewPager);
                     }
 
                     @Override
-                    public void onFailure(Call<DRList> call, Throwable t) {
-
-                    }
-                });*/
-        Log.e("list", loginResponse.getUserName()+ " " +loginResponse.getPassword()+ " " + loginResponse.getEmp_id());
-        APIClient.getClient().getList(loginResponse.getUserName(), loginResponse.getPassword(), loginResponse.getEmp_id())
-                .enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Log.e("list", response.code() + "  " + response.toString());
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                    public void onFailure(Call<DeliveryResponseModel> call, Throwable t) {
+                        t.printStackTrace();
                     }
                 });
     }
@@ -197,12 +207,13 @@ public class TabActivity extends AppCompatActivity {
 
             int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
             if (sectionNumber == 1) {
-                List<DeliveryModel> deliveryModels = RDApplication.getDeliverySetModel().getDeliveryModels();
+                List<DeliveryModel> deliveryModels = RDApplication.getDeliveryModels();
                 DeliveryAdapter adapter = new DeliveryAdapter(this.getContext(), deliveryModels, new DeliveryAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(DeliveryModel deliveryModel) {
                         Intent intent = new Intent(getActivity(), DeliveryDetailsActivity.class);
-                        intent.putExtra(KeyConstants.INTENT_EXTRA_DELIVERY_NUMBER, deliveryModel.getTrackingNumber());
+                        intent.putExtra(KeyConstants.INTENT_EXTRA_DELIVERY_NUMBER, deliveryModel.getDeliveryNumber());
+                        intent.putExtra(KeyConstants.INTENT_EXTRA_SHIPMENT_AWB, deliveryModel.getAwb());
                         getActivity().startActivity(intent);
                     }
                 });

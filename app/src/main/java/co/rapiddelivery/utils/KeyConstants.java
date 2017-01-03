@@ -13,6 +13,7 @@ public class KeyConstants {
 
     // Intent constants
     public static String INTENT_EXTRA_DELIVERY_NUMBER = "delivery_number";
+    public static String INTENT_EXTRA_SHIPMENT_AWB = "shipment_awb";
     public static String INTENT_EXTRA_PICKUP_NUMBER = "pickup_number";
 
 }

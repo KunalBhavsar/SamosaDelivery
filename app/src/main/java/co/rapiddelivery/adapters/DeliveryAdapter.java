@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -18,7 +18,9 @@ import co.rapiddelivery.views.CustomTextView;
  * Created by Kunal on 19/12/16.
  */
 
-public class DeliveryAdapter extends RecyclerView.Adapter<DeliveryAdapter.MyViewHolder> {
+public class DeliveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_ITEM = 1;
     private Context mContext;
     private List<DeliveryModel> deliveryList;
     private final OnItemClickListener listener;
@@ -45,6 +47,15 @@ public class DeliveryAdapter extends RecyclerView.Adapter<DeliveryAdapter.MyView
         }
     }
 
+    class MyHeaderHolder extends RecyclerView.ViewHolder {
+        TextView textView;
+
+        public MyHeaderHolder(View itemView) {
+            super(itemView);
+            textView = (TextView) itemView.findViewById(android.R.id.text1);
+        }
+    }
+
     public DeliveryAdapter(Context mContext, List<DeliveryModel> deliveryList, OnItemClickListener listener) {
         this.mContext = mContext;
         this.deliveryList = deliveryList;
@@ -52,7 +63,25 @@ public class DeliveryAdapter extends RecyclerView.Adapter<DeliveryAdapter.MyView
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public int getItemViewType(int position) {
+        if (deliveryList.get(position).isHeader()) {
+            return TYPE_HEADER;
+        }
+
+        return TYPE_ITEM;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == TYPE_ITEM) {
+            //inflate your layout and pass it to view holder
+            return new MyViewHolder(LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_delivery_list, parent, false));
+        } else if (viewType == TYPE_HEADER) {
+            //inflate your layout and pass it to view holder
+            return new MyHeaderHolder(LayoutInflater.from(parent.getContext())
+                    .inflate(android.R.layout.simple_list_item_1, parent, false));
+        }
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_delivery_list, parent, false);
 
@@ -60,21 +89,28 @@ public class DeliveryAdapter extends RecyclerView.Adapter<DeliveryAdapter.MyView
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
         DeliveryModel deliveryModel = deliveryList.get(position);
-        holder.txtCustName.setText(deliveryModel.getName());
-        holder.txtCustAddress.setText(deliveryModel.getAddress() + " " + deliveryModel.getPincode());
-        holder.txtAmount.setText(deliveryModel.getCodAmount() + " Rs.");
-        if (position % 2 == 0) {
-            holder.relWholeContent.setBackgroundColor(mContext.getResources().getColor(R.color.yellow));
+        if (getItemViewType(position) == TYPE_HEADER) {
+            MyHeaderHolder holder = (MyHeaderHolder) viewHolder;
+            holder.textView.setText(deliveryModel.getDeliveryNumber());
         }
-        if (position % 2 == 1) {
-            holder.relWholeContent.setBackgroundColor(mContext.getResources().getColor(R.color.red));
+        else if (getItemViewType(position) == TYPE_ITEM) {
+            MyViewHolder holder = (MyViewHolder) viewHolder;
+            holder.txtCustName.setText(deliveryModel.getName());
+            holder.txtCustAddress.setText(deliveryModel.getAddress1() + deliveryModel.getAddress2() + " " + deliveryModel.getPincode());
+            holder.txtAmount.setText(deliveryModel.getValue() + " Rs.");
+            if (position % 2 == 0) {
+                holder.relWholeContent.setBackgroundColor(mContext.getResources().getColor(R.color.yellow));
+            }
+            if (position % 2 == 1) {
+                holder.relWholeContent.setBackgroundColor(mContext.getResources().getColor(R.color.red));
+            }
+            if (position == 0) {
+                holder.relWholeContent.setBackgroundColor(mContext.getResources().getColor(R.color.green));
+            }
+            holder.setClickListener(deliveryModel, listener);
         }
-        if (position == 0) {
-            holder.relWholeContent.setBackgroundColor(mContext.getResources().getColor(R.color.green));
-        }
-        holder.setClickListener(deliveryModel, listener);
     }
 
     @Override

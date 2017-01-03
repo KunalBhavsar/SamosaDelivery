@@ -1,36 +1,72 @@
 package co.rapiddelivery.models;
 
 /**
- * Created by Kunal on 19/12/16.
+ * Created by Kunal on 03/01/17.
  */
 
 public class DeliveryModel {
-    private String trackingNumber;
-    private String name;
+    private boolean header;
+    private String deliveryNumber;
+
+    private String awb;
+    private String status;
+    private String address1;
+    private String address2;
     private String pincode;
-    private String phoneNumber;
-    private String address;
-    private double codAmount;
-    private int status;
-    private int paymentMode;
-    private int priority;
-    private double latitude;
-    private double longitude;
+    private String value;
+    private String flow;
+    private String mode;
+    private double lat;
+    private double lng;
+    private String dispatchCount;
+    private String name;
 
-    public String getTrackingNumber() {
-        return trackingNumber;
+    public boolean isHeader() {
+        return header;
     }
 
-    public void setTrackingNumber(String trackingNumber) {
-        this.trackingNumber = trackingNumber;
+    public void setHeader(boolean header) {
+        this.header = header;
     }
 
-    public String getName() {
-        return name;
+    public String getDeliveryNumber() {
+        return deliveryNumber;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDeliveryNumber(String deliveryNumber) {
+        this.deliveryNumber = deliveryNumber;
+    }
+
+    public String getAwb() {
+        return awb;
+    }
+
+    public void setAwb(String awb) {
+        this.awb = awb;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getAddress1() {
+        return address1;
+    }
+
+    public void setAddress1(String address1) {
+        this.address1 = address1;
+    }
+
+    public String getAddress2() {
+        return address2;
+    }
+
+    public void setAddress2(String address2) {
+        this.address2 = address2;
     }
 
     public String getPincode() {
@@ -41,67 +77,59 @@ public class DeliveryModel {
         this.pincode = pincode;
     }
 
-    public double getCodAmount() {
-        return codAmount;
+    public String getValue() {
+        return value;
     }
 
-    public void setCodAmount(double codAmount) {
-        this.codAmount = codAmount;
+    public void setValue(String value) {
+        this.value = value;
     }
 
-    public int getStatus() {
-        return status;
+    public String getFlow() {
+        return flow;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setFlow(String flow) {
+        this.flow = flow;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getMode() {
+        return mode;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
-    public String getAddress() {
-        return address;
+    public double getLat() {
+        return lat;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setLat(double lat) {
+        this.lat = lat;
     }
 
-    public int getPaymentMode() {
-        return paymentMode;
+    public double getLng() {
+        return lng;
     }
 
-    public void setPaymentMode(int paymentMode) {
-        this.paymentMode = paymentMode;
+    public void setLng(double lng) {
+        this.lng = lng;
     }
 
-    public int getPriority() {
-        return priority;
+    public String getDispatchCount() {
+        return dispatchCount;
     }
 
-    public void setPriority(int priority) {
-        this.priority = priority;
+    public void setDispatchCount(String dispatchCount) {
+        this.dispatchCount = dispatchCount;
     }
 
-    public double getLatitude() {
-        return latitude;
+    public String getName() {
+        return name;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setName(String name) {
+        this.name = name;
     }
 }

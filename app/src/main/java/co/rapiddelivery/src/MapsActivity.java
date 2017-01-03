@@ -310,16 +310,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //the include method will calculate the min and max bound.
             builder.include(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
 
-            List<DeliveryModel> deliveryModels = RDApplication.getDeliverySetModel().getDeliveryModels();
+            List<DeliveryModel> deliveryModels = RDApplication.getDeliveryModels();
 
             for (DeliveryModel deliveryModel :
                     deliveryModels) {
-                LatLng latLng = new LatLng(deliveryModel.getLatitude(), deliveryModel.getLongitude());
+                if (deliveryModel.isHeader()) {
+                    break;
+                }
+                LatLng latLng = new LatLng(deliveryModel.getLat(), deliveryModel.getLng());
                 builder.include(latLng);
                 mMap.addMarker(new MarkerOptions()
                         .position(latLng)
                         .title(deliveryModel.getName())
-                        .snippet(deliveryModel.getAddress())
+                        .snippet(deliveryModel.getAddress1() + " " + deliveryModel.getAddress2())
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)))
                         .setTag(deliveryModel);
             }
@@ -355,7 +358,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     if (tag instanceof DeliveryModel) {
                         DeliveryModel deliveryModel = (DeliveryModel) marker.getTag();
                         Intent intent = new Intent(mActivityContext, DeliveryDetailsActivity.class);
-                        intent.putExtra(KeyConstants.INTENT_EXTRA_DELIVERY_NUMBER, deliveryModel.getTrackingNumber());
+                        intent.putExtra(KeyConstants.INTENT_EXTRA_DELIVERY_NUMBER, deliveryModel.getDeliveryNumber());
+                        intent.putExtra(KeyConstants.INTENT_EXTRA_SHIPMENT_AWB, deliveryModel.getAwb());
                         mActivityContext.startActivity(intent);
                     }
                     else if (tag instanceof  PickUpModel) {

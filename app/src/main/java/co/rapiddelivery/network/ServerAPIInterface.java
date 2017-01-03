@@ -22,10 +22,6 @@ public interface ServerAPIInterface {
 
     @FormUrlEncoded
     @POST("app/ops/drs.php")
-    Call<DRList> getDRList(@Field("username") String username, @Field("password") String password, @Field("emp_id") String empId);
-
-    @FormUrlEncoded
-    @POST("app/ops/drs.php")
-    Call<ResponseBody> getList(@Field("username") String username, @Field("password") String password, @Field("emp_id") String empId);
+    Call<DeliveryResponseModel> getList(@Field("username") String username, @Field("password") String password, @Field("emp_id") int empId);
 }
 

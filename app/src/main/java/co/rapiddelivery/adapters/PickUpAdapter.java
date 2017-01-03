@@ -9,7 +9,6 @@ import android.widget.LinearLayout;
 
 import java.util.List;
 
-import co.rapiddelivery.models.DeliveryModel;
 import co.rapiddelivery.models.PickUpModel;
 import co.rapiddelivery.src.R;
 import co.rapiddelivery.views.CustomTextView;

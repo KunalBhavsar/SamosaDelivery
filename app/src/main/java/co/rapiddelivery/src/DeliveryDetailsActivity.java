@@ -2,16 +2,12 @@ package co.rapiddelivery.src;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import co.rapiddelivery.RDApplication;
@@ -43,7 +39,8 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         mAppContext = getApplicationContext();
 
         String deliveryNumber = getIntent().getStringExtra(KeyConstants.INTENT_EXTRA_DELIVERY_NUMBER);
-        deliveryModel = RDApplication.getDeliveryModelByTrackingNumber(deliveryNumber);
+        String awb = getIntent().getStringExtra(KeyConstants.INTENT_EXTRA_SHIPMENT_AWB);
+        deliveryModel = RDApplication.getDeliveryModelByTrackingNumberAndAWB(deliveryNumber, awb);
 
         if (deliveryModel == null) {
             Toast.makeText(mActivityContext, "Error in fetching delivery data..", Toast.LENGTH_SHORT).show();
@@ -51,7 +48,7 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         }
 
         txtTempContent = (CustomTextView) findViewById(R.id.txt_temp);
-        txtTempContent.setText(deliveryModel.getName() + "\n" + deliveryModel.getAddress() + "\n"  + deliveryModel.getPincode());
+        txtTempContent.setText(deliveryModel.getName() + "\n" + deliveryModel.getAddress1() + "\n" + deliveryModel.getAddress2() + "\n"  + deliveryModel.getPincode());
 
         viewSignPad = (TouchEventView) findViewById(R.id.view_sign_pad);
 

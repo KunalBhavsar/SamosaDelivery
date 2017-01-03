@@ -88,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        mEdtUsername.setText("marshal.chettiar");
+        mEdtUsername.setText("aaqyl.chagla");
         mEdtPassword.setText("rapid123");
 
         Button mSignInButton = (Button) findViewById(R.id.sign_in_button);

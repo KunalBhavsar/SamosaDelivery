@@ -22,7 +22,7 @@ public class APIClient {
         if (retrofit == null) {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
             httpClient.addInterceptor(logging);
             httpClient.connectTimeout(2, TimeUnit.MINUTES);
 
