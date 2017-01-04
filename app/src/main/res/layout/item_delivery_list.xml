@@ -34,6 +34,14 @@
 
                 <co.rapiddelivery.views.CustomTextView
                     android:layout_below="@+id/txt_customer_name"
+                    android:id="@+id/txt_delivery_number"
+                    style="@style/textview_medium_text"
+                    android:layout_width="match_parent"
+                    android:padding="@dimen/_5dp"
+                    android:layout_height="wrap_content" />
+
+                <co.rapiddelivery.views.CustomTextView
+                    android:layout_below="@+id/txt_delivery_number"
                     android:id="@+id/txt_customer_address"
                     style="@style/textview_small_text"
                     android:padding="@dimen/_5dp"

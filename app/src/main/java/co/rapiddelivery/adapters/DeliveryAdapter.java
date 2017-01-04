@@ -35,12 +35,13 @@ public class DeliveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public CustomTextView txtCustName, txtCustAddress, txtAmount;
+        public CustomTextView txtCustName, txtDeliveryNumber, txtCustAddress, txtAmount;
         public LinearLayout relWholeContent;
 
         public MyViewHolder(View view) {
             super(view);
             txtCustName = (CustomTextView) view.findViewById(R.id.txt_customer_name);
+            txtDeliveryNumber = (CustomTextView) view.findViewById(R.id.txt_delivery_number);
             txtCustAddress = (CustomTextView) view.findViewById(R.id.txt_customer_address);
             txtAmount = (CustomTextView) view.findViewById(R.id.txt_amount);
             relWholeContent = (LinearLayout) view.findViewById(R.id.rel_whole_content);
@@ -107,7 +108,8 @@ public class DeliveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         else if (getItemViewType(position) == TYPE_ITEM) {
             MyViewHolder holder = (MyViewHolder) viewHolder;
             holder.txtCustName.setText(deliveryModel.getName());
-            holder.txtCustAddress.setText(deliveryModel.getAddress1() + deliveryModel.getAddress2() + " " + deliveryModel.getPincode());
+            holder.txtDeliveryNumber.setText("(" + deliveryModel.getAwb() + ") - " + deliveryModel.getFlow());
+            holder.txtCustAddress.setText(deliveryModel.getAddress1() + ", " + deliveryModel.getAddress2() + " - " + deliveryModel.getPincode());
             holder.txtAmount.setText(deliveryModel.getValue() + " Rs.");
             if (deliveryModel.getStatus().equals("RTO")) {
                 holder.relWholeContent.setBackgroundColor(mContext.getResources().getColor(R.color.yellow));
