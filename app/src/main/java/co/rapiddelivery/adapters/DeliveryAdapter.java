@@ -62,7 +62,9 @@ public class DeliveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         public MyHeaderHolder(View itemView) {
             super(itemView);
+            itemView.setBackgroundColor(mContext.getResources().getColor(R.color.grey_dfdfdf));
             textView = (TextView) itemView.findViewById(android.R.id.text1);
+            textView.setTextColor(mContext.getResources().getColor(R.color.colorPrimaryDark));
         }
     }
 

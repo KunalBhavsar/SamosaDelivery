@@ -24,7 +24,8 @@ public class APIClient {
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
             httpClient.addInterceptor(logging);
-            httpClient.connectTimeout(2, TimeUnit.MINUTES);
+            httpClient.readTimeout(60, TimeUnit.SECONDS);
+            httpClient.connectTimeout(60, TimeUnit.SECONDS);
 
             OkHttpClient client = httpClient.build();
             retrofit = new Retrofit.Builder()

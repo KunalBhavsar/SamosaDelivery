@@ -140,7 +140,7 @@ public class TabActivity extends AppCompatActivity {
         String loginDetails = SPrefUtils.getStringPreference(this, SPrefUtils.LOGGEDIN_USER_DETAILS);
         LoginResponse loginResponse = new Gson().fromJson(loginDetails, LoginResponse.class);
 
-        APIClient.getClient().getList(loginResponse.getUserName(), loginResponse.getPassword(), Integer.parseInt(loginResponse.getEmp_id()))
+        APIClient.getClient().getDeliveryList(loginResponse.getUserName(), loginResponse.getPassword(), loginResponse.getEmp_id())
             .enqueue(new Callback<DeliveryResponseModel>() {
             @Override
             public void onResponse(Call<DeliveryResponseModel> call, Response<DeliveryResponseModel> response) {

@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
@@ -40,6 +41,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -299,6 +304,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         updateMarkers();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDeliveryDataUpdatedEvent(RDApplication.DeliveryDataUpdatedEvent event) {
+        updateMarkers();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPickupDataUpdatedEvent(RDApplication.PickupDataUpdatedEvent event) {
+        updateMarkers();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
     private void updateMarkers() {
         if (mMap == null) {
             return;
@@ -312,10 +339,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             List<DeliveryModel> deliveryModels = RDApplication.getDeliveryModels();
 
-            for (DeliveryModel deliveryModel :
-                    deliveryModels) {
+            for (DeliveryModel deliveryModel : deliveryModels) {
                 if (deliveryModel.isHeader()) {
-                    break;
+                    continue;
                 }
                 LatLng latLng = new LatLng(deliveryModel.getLat(), deliveryModel.getLng());
                 builder.include(latLng);
@@ -329,8 +355,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             List<PickUpModel> pickUpModels = RDApplication.getPickupSetModel().getPickupSetModels();
 
-            for (PickUpModel pickUpModel :
-                    pickUpModels) {
+            for (PickUpModel pickUpModel : pickUpModels) {
                 LatLng latLng = new LatLng(pickUpModel.getLatitude(), pickUpModel.getLongitude());
                 builder.include(latLng);
                 mMap.addMarker(new MarkerOptions()
