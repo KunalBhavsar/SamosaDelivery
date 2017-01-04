@@ -64,7 +64,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:textColor="@color/colorPrimaryLight"
+                        android:textColor="@android:color/white"
                         android:textStyle="bold"/>
                     <co.rapiddelivery.views.CustomTextView
                         android:id="@+id/txt_mode"
@@ -74,7 +74,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:textColor="@color/colorPrimaryLight"/>
+                        android:textColor="@android:color/white"/>
                 </RelativeLayout>
             </RelativeLayout>
         </LinearLayout>
