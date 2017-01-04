@@ -36,7 +36,7 @@
             android:layout_marginLeft="@dimen/_15dp"
             android:layout_marginRight="@dimen/_15dp"
             android:layout_marginTop="@dimen/_15dp"
-            android:elevation="10dp"
+            card_view:cardElevation="10dp"
             android:minHeight="@dimen/_120dp"
             android:paddingLeft="@dimen/_20dp"
             android:paddingRight="@dimen/_20dp"

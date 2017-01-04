@@ -117,6 +117,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="co.rapiddelivery.src.TabActivity" />
         </activity>
+
+        <receiver android:name="co.rapiddelivery.receiver.GpsLocationReceiver">
+            <intent-filter>
+                <action android:name="android.location.PROVIDERS_CHANGED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
