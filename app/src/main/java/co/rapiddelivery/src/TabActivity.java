@@ -40,6 +40,7 @@ import co.rapiddelivery.models.PickUpModel;
 import co.rapiddelivery.network.APIClient;
 import co.rapiddelivery.network.DeliveryResponseModel;
 import co.rapiddelivery.network.LoginResponse;
+import co.rapiddelivery.receiver.AlarmReceiver;
 import co.rapiddelivery.utils.KeyConstants;
 import co.rapiddelivery.utils.SPrefUtils;
 import retrofit2.Call;
@@ -132,6 +133,8 @@ public class TabActivity extends AppCompatActivity {
         RDApplication.setPickupSetModel(null);
         Intent intent = new Intent(mActivityContext, LoginActivity.class);
         mActivityContext.startActivity(intent);
+        AlarmReceiver alarmReceiver = new AlarmReceiver();
+        alarmReceiver.cancelAlarm(getApplicationContext());
         finish();
     }
 

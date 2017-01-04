@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 import co.rapiddelivery.RDApplication;
 import co.rapiddelivery.network.APIClient;
 import co.rapiddelivery.network.LoginResponse;
+import co.rapiddelivery.receiver.AlarmReceiver;
 import co.rapiddelivery.utils.KeyConstants;
 import co.rapiddelivery.utils.SPrefUtils;
 import co.rapiddelivery.views.CustomTextInputEditText;
@@ -162,9 +163,11 @@ public class LoginActivity extends AppCompatActivity {
 
                             Intent intent = new Intent(mActivityContext, TabActivity.class);
                             mActivityContext.startActivity(intent);
+                            AlarmReceiver alarmReceiver = new AlarmReceiver();
+                            alarmReceiver.setDailyUpdateAlarm(getApplicationContext());
                             finish();
 
-                            Toast.makeText(mActivityContext, "Welcome " + loginResponse.getName() + "!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mActivityContext, "Welcome " + loginResponse.getName() + "! Location update started", Toast.LENGTH_LONG).show();
                             break;
                         case "400" :
                             Toast.makeText(mActivityContext, loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
