@@ -86,6 +86,7 @@ public class LocationService extends Service implements LocationListener, Google
     public void onDestroy() {
         Log.e(TAG, "loc onDestroy");
         mGoogleApiClient.disconnect();
+        unregisterReceiver(this.mBatInfoReceiver);
         super.onDestroy();
     }
 
