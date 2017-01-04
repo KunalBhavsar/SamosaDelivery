@@ -8,10 +8,9 @@ import java.util.List;
  * Created by Shraddha on 27/12/16.
  */
 
-public class DeliveryResponseModel implements Serializable {
+public class DeliveryResponseModel extends ServerResponseBase implements Serializable {
 
     private List<DeliveryModel> delivery;
-    private String status_code;
 
     public List<DeliveryModel> getDelivery() {
         return delivery;
@@ -19,14 +18,6 @@ public class DeliveryResponseModel implements Serializable {
 
     public void setDelivery(ArrayList<DeliveryModel> delivery) {
         this.delivery = delivery;
-    }
-
-    public String getStatus_code() {
-        return status_code;
-    }
-
-    public void setStatus_code(String status_code) {
-        this.status_code = status_code;
     }
 
     public class DeliveryModel implements Serializable {

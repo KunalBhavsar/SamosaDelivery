@@ -2,19 +2,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffffff"
     android:padding="@dimen/_5dp"
-                android:background="#ffffff"
     tools:context="co.rapiddelivery.src.TabActivity$PlaceholderFragment">
+    <!-- Login progress -->
+    <ProgressBar
+        android:id="@+id/loading_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/_20dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
-        android:layout_marginLeft="@dimen/_5dp"
-        android:layout_marginStart="@dimen/_5dp"
-        android:layout_marginEnd="@dimen/_5dp"
-        android:layout_marginRight="@dimen/_5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_5dp"
+        android:layout_marginLeft="@dimen/_5dp"
+        android:layout_marginRight="@dimen/_5dp"
+        android:layout_marginStart="@dimen/_5dp"
         android:clipToPadding="false"
         android:scrollbars="vertical" />
+
+    <co.rapiddelivery.views.CustomTextView
+        android:id="@+id/txt_coming_soon"
+        style="@style/textview_large_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="@color/colorPrimaryDark"
+        android:textStyle="bold"
+        android:text="Coming soon..." />
+
+    <co.rapiddelivery.views.CustomTextView
+        android:id="@+id/txt_reload_data"
+        style="@style/textview_large_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="@color/colorPrimaryDark"
+        android:textStyle="bold"
+        android:text="Click here to\nRetry"/>
 
 </RelativeLayout>

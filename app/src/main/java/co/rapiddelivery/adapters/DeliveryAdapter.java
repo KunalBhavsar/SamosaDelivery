@@ -1,6 +1,7 @@
 package co.rapiddelivery.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,11 +35,11 @@ public class DeliveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyDataSetChanged();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public CustomTextView txtCustName, txtDeliveryNumber, txtCustAddress, txtAmount, txtMode;
-        public LinearLayout relWholeContent;
+    private class MyViewHolder extends RecyclerView.ViewHolder {
+        CustomTextView txtCustName, txtDeliveryNumber, txtCustAddress, txtAmount, txtMode;
+        LinearLayout relWholeContent;
 
-        public MyViewHolder(View view) {
+        MyViewHolder(View view) {
             super(view);
             txtCustName = (CustomTextView) view.findViewById(R.id.txt_customer_name);
             txtDeliveryNumber = (CustomTextView) view.findViewById(R.id.txt_delivery_number);
@@ -48,7 +49,7 @@ public class DeliveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             txtMode = (CustomTextView) view.findViewById(R.id.txt_mode);
         }
 
-        public void setClickListener(final DeliveryModel deliveryModel, final OnItemClickListener listener) {
+        void setClickListener(final DeliveryModel deliveryModel, final OnItemClickListener listener) {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -58,14 +59,14 @@ public class DeliveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    class MyHeaderHolder extends RecyclerView.ViewHolder {
+    private class MyHeaderHolder extends RecyclerView.ViewHolder {
         TextView textView;
 
-        public MyHeaderHolder(View itemView) {
+        MyHeaderHolder(View itemView) {
             super(itemView);
-            itemView.setBackgroundColor(mContext.getResources().getColor(R.color.grey_77));
+            itemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey_77));
             textView = (TextView) itemView.findViewById(android.R.id.text1);
-            textView.setTextColor(mContext.getResources().getColor(R.color.colorPrimaryDark));
+            textView.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimaryDark));
         }
     }
 
@@ -113,13 +114,13 @@ public class DeliveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             holder.txtAmount.setText(deliveryModel.getValue());
             holder.txtMode.setText(deliveryModel.getMode().toUpperCase());
             if (deliveryModel.getStatus().equals("RTO")) {
-                holder.relWholeContent.setBackgroundColor(mContext.getResources().getColor(R.color.yellow));
+                holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.yellow));
             }
             if (deliveryModel.getStatus().equals("Pending")) {
-                holder.relWholeContent.setBackgroundColor(mContext.getResources().getColor(R.color.red));
+                holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.red));
             }
             if (deliveryModel.getStatus().equals("Delivered")) {
-                holder.relWholeContent.setBackgroundColor(mContext.getResources().getColor(R.color.green));
+                holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.green));
             }
             holder.setClickListener(deliveryModel, listener);
         }

@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
             String loggedInUserDetails = SPrefUtils.getStringPreference(mAppContext, SPrefUtils.LOGGEDIN_USER_DETAILS);
 
             if (loggedInUserDetails != null) {
-                ((RDApplication)getApplication()).setAppOwnerData(new Gson().fromJson(loggedInUserDetails, LoginResponse.class));
+                RDApplication.setAppOwnerData(new Gson().fromJson(loggedInUserDetails, LoginResponse.class));
             }
 
 
@@ -159,7 +159,7 @@ public class LoginActivity extends AppCompatActivity {
                             loginResponse.setUserName(username);
                             SPrefUtils.setIntegerPreference(mAppContext, SPrefUtils.LOGIN_STATUS, KeyConstants.LOGIN_STATUS_LOGGED_IN);
                             SPrefUtils.setStringPreference(mAppContext, SPrefUtils.LOGGEDIN_USER_DETAILS, new Gson().toJson(loginResponse));
-
+                            RDApplication.setAppOwnerData(loginResponse);
                             Intent intent = new Intent(mActivityContext, TabActivity.class);
                             mActivityContext.startActivity(intent);
                             finish();

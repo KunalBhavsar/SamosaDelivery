@@ -1,15 +1,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:background="@drawable/app_background_gradient"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                tools:context="co.rapiddelivery.src.LoginActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/app_background_gradient"
+    android:gravity="center_horizontal"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="co.rapiddelivery.src.LoginActivity">
 
     <!-- Login progress -->
     <ProgressBar
@@ -18,108 +18,109 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                                        xmlns:app="http://schemas.android.com/apk/res-auto"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:layout_centerInParent="true"
-                                        android:layout_marginBottom="@dimen/_5dp"
-                                        android:layout_marginLeft="@dimen/_10dp"
-                                        android:layout_marginRight="@dimen/_10dp"
-                                        android:layout_marginTop="@dimen/_5dp"
-                                        android:minHeight="@dimen/_120dp"
-                                        android:paddingLeft="@dimen/_20dp"
-                                        android:paddingRight="@dimen/_20dp"
-                                        app:cardCornerRadius="@dimen/_20dp"
-                                        app:cardElevation="10dp">
-
-        <LinearLayout
+        <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="@dimen/_5dp"
+            android:layout_marginLeft="@dimen/_10dp"
+            android:layout_marginRight="@dimen/_10dp"
+            android:layout_marginTop="@dimen/_5dp"
+            android:minHeight="@dimen/_120dp"
+            android:paddingLeft="@dimen/_20dp"
+            android:paddingRight="@dimen/_20dp"
+            app:cardCornerRadius="@dimen/_20dp"
+            app:cardElevation="10dp">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_30dp">
+                android:gravity="center"
+                android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/img_logo"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:paddingLeft="@dimen/_20dp"
-                    android:paddingRight="@dimen/_20dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/rdlogo"/>
+                    android:layout_marginTop="@dimen/_30dp">
 
-            </RelativeLayout>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/txt_input_layout_username"
-                        style="@style/text_input_layout_style"
+                    <ImageView
+                        android:id="@+id/img_logo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_15dp"
-                        app:errorTextAppearance="@style/text_input_layout_error_lable_style"
-                        app:hintTextAppearance="@style/text_input_layout_floating_lable_style">
+                        android:layout_centerInParent="true"
+                        android:paddingLeft="@dimen/_20dp"
+                        android:paddingRight="@dimen/_20dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/rdlogo" />
 
-                        <co.rapiddelivery.views.CustomTextInputEditText
-                            android:id="@+id/edt_username"
-                            style="@style/edittext_style"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/hint_username"
-                            android:inputType="text"
-                            android:maxLength="30"
-                            android:maxLines="1"/>
+                </RelativeLayout>
 
-                    </android.support.design.widget.TextInputLayout>
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/txt_input_layout_password"
-                        style="@style/text_input_layout_style"
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/txt_input_layout_username"
+                    style="@style/text_input_layout_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_15dp"
+                    app:errorTextAppearance="@style/text_input_layout_error_lable_style"
+                    app:hintTextAppearance="@style/text_input_layout_floating_lable_style">
+
+                    <co.rapiddelivery.views.CustomTextInputEditText
+                        android:id="@+id/edt_username"
+                        style="@style/edittext_style"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_15dp"
-                        app:errorTextAppearance="@style/text_input_layout_error_lable_style"
-                        app:hintTextAppearance="@style/text_input_layout_floating_lable_style">
+                        android:hint="@string/hint_username"
+                        android:inputType="text"
+                        android:maxLength="30"
+                        android:maxLines="1" />
 
-                        <co.rapiddelivery.views.CustomTextInputEditText
-                            android:id="@+id/edt_password"
-                            style="@style/edittext_style"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/hint_password"
-                            android:imeActionId="@+id/login"
-                            android:imeActionLabel="@string/action_sign_in_short"
-                            android:imeOptions="actionUnspecified"
-                            android:inputType="textPassword"
-                            android:maxLength="30"
-                            android:maxLines="1"/>
+                </android.support.design.widget.TextInputLayout>
 
-                    </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/txt_input_layout_password"
+                    style="@style/text_input_layout_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_15dp"
+                    app:errorTextAppearance="@style/text_input_layout_error_lable_style"
+                    app:hintTextAppearance="@style/text_input_layout_floating_lable_style">
 
-                    <co.rapiddelivery.views.CustomButton
-                        android:id="@+id/sign_in_button"
-                        style="@style/button_orange"
+                    <co.rapiddelivery.views.CustomTextInputEditText
+                        android:id="@+id/edt_password"
+                        style="@style/edittext_style"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/_20dp"
-                        android:layout_marginLeft="@dimen/_20dp"
-                        android:layout_marginRight="@dimen/_20dp"
-                        android:layout_marginTop="@dimen/_20dp"
-                        android:text="@string/action_sign_in_short"
-                        android:textStyle="bold"/>
+                        android:hint="@string/hint_password"
+                        android:imeActionId="@+id/login"
+                        android:imeActionLabel="@string/action_sign_in_short"
+                        android:imeOptions="actionUnspecified"
+                        android:inputType="textPassword"
+                        android:maxLength="30"
+                        android:maxLines="1" />
 
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
+                </android.support.design.widget.TextInputLayout>
+
+                <co.rapiddelivery.views.CustomButton
+                    android:id="@+id/sign_in_button"
+                    style="@style/button_orange"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_20dp"
+                    android:layout_marginLeft="@dimen/_20dp"
+                    android:layout_marginRight="@dimen/_20dp"
+                    android:layout_marginTop="@dimen/_20dp"
+                    android:text="@string/action_sign_in_short"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
     </ScrollView>
 </RelativeLayout>

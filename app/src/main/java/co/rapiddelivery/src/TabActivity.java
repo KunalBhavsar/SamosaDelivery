@@ -3,6 +3,7 @@ package co.rapiddelivery.src;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -21,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -40,8 +42,10 @@ import co.rapiddelivery.models.PickUpModel;
 import co.rapiddelivery.network.APIClient;
 import co.rapiddelivery.network.DeliveryResponseModel;
 import co.rapiddelivery.network.LoginResponse;
+import co.rapiddelivery.utils.ActivityUtils;
 import co.rapiddelivery.utils.KeyConstants;
 import co.rapiddelivery.utils.SPrefUtils;
+import co.rapiddelivery.views.CustomTextView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -80,8 +84,6 @@ public class TabActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        getDRListFromServer();
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -135,85 +137,6 @@ public class TabActivity extends AppCompatActivity {
         finish();
     }
 
-    public void getDRListFromServer() {
-
-        String loginDetails = SPrefUtils.getStringPreference(this, SPrefUtils.LOGGEDIN_USER_DETAILS);
-        LoginResponse loginResponse = new Gson().fromJson(loginDetails, LoginResponse.class);
-
-        APIClient.getClient().getDeliveryList(loginResponse.getUserName(), loginResponse.getPassword(), loginResponse.getEmp_id())
-            .enqueue(new Callback<DeliveryResponseModel>() {
-            @Override
-            public void onResponse(Call<DeliveryResponseModel> call, Response<DeliveryResponseModel> response) {
-                List<DeliveryModel> deliveryModels = new ArrayList<>();
-                if (response != null && response.body() != null) {
-                    DeliveryModel deliveryModel;
-                    for (DeliveryResponseModel.DeliveryModel deliveryModelFromServer : response.body().getDelivery()) {
-                        deliveryModel = new DeliveryModel();
-                        deliveryModel.setHeader(true);
-                        deliveryModel.setDeliveryNumber(deliveryModelFromServer.getDispatch_number());
-                        deliveryModels.add(deliveryModel);
-                        for (DeliveryResponseModel.DeliveryModel.ShipmentModel shipmentModel : deliveryModelFromServer.getShipments()) {
-                            deliveryModel = new DeliveryModel();
-                            deliveryModel.setPincode(shipmentModel.getPincode());
-                            deliveryModel.setName(shipmentModel.getName());
-                            deliveryModel.setAddress1(shipmentModel.getAddress_1());
-                            deliveryModel.setAddress2(shipmentModel.getAddress_2());
-                            deliveryModel.setAwb(shipmentModel.getAwb());
-                            deliveryModel.setDispatchCount(shipmentModel.getDispatch_count());
-                            deliveryModel.setFlow(shipmentModel.getFlow());
-                            deliveryModel.setLat(shipmentModel.getLat());
-                            deliveryModel.setLng(shipmentModel.getLng());
-                            deliveryModel.setStatus(shipmentModel.getStatus());
-                            deliveryModel.setValue(shipmentModel.getValue());
-                            deliveryModel.setMode(shipmentModel.getMode());
-                            deliveryModel.setHeader(false);
-                            deliveryModel.setDeliveryNumber(deliveryModelFromServer.getDispatch_number());
-                            deliveryModels.add(deliveryModel);
-                        }
-                    }
-                }
-                RDApplication.setDeliveryModels(deliveryModels);
-            }
-
-            @Override
-            public void onFailure(Call<DeliveryResponseModel> call, Throwable t) {
-                t.printStackTrace();
-                for (int i = 0; i < 6; i++) {
-                    PickUpModel pickUpModel = new PickUpModel();
-                    pickUpModel.setPickupNumber(i + "");
-                    switch (i % 3) {
-                        case 0 :
-                            pickUpModel.setName("Kunal Bhavsar");
-                            pickUpModel.setAddress("11, ABBK, Mahajan Wadi, Opp. Central Railway Workshop, Parel - Mumbai");
-                            pickUpModel.setPincode("400012");
-                            pickUpModel.setCutOffTime((i + 1));
-                            pickUpModel.setLatitude(19.0022 + (i * 0.0001 * 19));
-                            pickUpModel.setLongitude(72.8416 - (i * 0.0001 * 19));
-                            break;
-                        case 1 :
-                            pickUpModel.setName("Shraddha Pednekar");
-                            pickUpModel.setAddress("27, Jagruti Building, Devipada, near National Park, Boriwali - Mumbai");
-                            pickUpModel.setPincode("400012");
-                            pickUpModel.setCutOffTime((i + 1));
-                            pickUpModel.setLatitude(19.0022 + (i * 0.0001 * 13));
-                            pickUpModel.setLongitude(72.8416 - (i * 0.0001 * 13));
-                            break;
-                        case 2:
-                            pickUpModel.setName("Yojana Rangnekar");
-                            pickUpModel.setAddress("3, Shivaji Park, Dangal Road, Virar - Thane");
-                            pickUpModel.setPincode("471012");
-                            pickUpModel.setCutOffTime((i + 1));
-                            pickUpModel.setLatitude(19.0022 + (i * 0.0001 * 17));
-                            pickUpModel.setLongitude(72.8416 - (i * 0.0001 * 17));
-                            break;
-                    }
-                    RDApplication.getPickupSetModel().getPickupSetModels().add(pickUpModel);
-                }
-                EventBus.getDefault().post(new RDApplication.PickupDataUpdatedEvent(RDApplication.getPickupSetModel()));
-            }
-        });
-    }
-
     /**
      * A placeholder fragment containing a simple view.
      */
@@ -223,11 +146,17 @@ public class TabActivity extends AppCompatActivity {
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+
         private RecyclerView recyclerView;
+        private ProgressBar loadingProgress;
+        private CustomTextView txtComingSoon;
+        private CustomTextView txtRetry;
+
         private DeliveryAdapter deliveryAdapter;
         private PickUpAdapter pickUpAdapter;
         private int sectionNumber;
 
+        private Context mContext;
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -245,8 +174,14 @@ public class TabActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
             recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+            loadingProgress = (ProgressBar) rootView.findViewById(R.id.loading_progress);
+            txtComingSoon = (CustomTextView) rootView.findViewById(R.id.txt_coming_soon);
+            txtRetry = (CustomTextView) rootView.findViewById(R.id.txt_reload_data);
+
+            mContext = this.getContext();
 
             sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+
             if (sectionNumber == 1) {
                 deliveryAdapter = new DeliveryAdapter(this.getContext(), RDApplication.getDeliveryModels(), new DeliveryAdapter.OnItemClickListener() {
                     @Override
@@ -264,6 +199,9 @@ public class TabActivity extends AppCompatActivity {
                 recyclerView.setAdapter(deliveryAdapter);
             }
             else if (sectionNumber == 2) {
+                txtComingSoon.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+
                 pickUpAdapter = new PickUpAdapter(this.getContext(), RDApplication.getPickupSetModel().getPickupSetModels(), new PickUpAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(PickUpModel pickUpModel) {
@@ -280,6 +218,14 @@ public class TabActivity extends AppCompatActivity {
             }
 
             return rootView;
+        }
+
+        @Override
+        public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+            if (sectionNumber == 1) {
+                getDRListFromServer();
+            }
         }
 
         @Subscribe(threadMode = ThreadMode.MAIN)
@@ -313,6 +259,92 @@ public class TabActivity extends AppCompatActivity {
             }
             if (sectionNumber == 2) {
                 pickUpAdapter.setPickUpModelList(RDApplication.getPickupSetModel().getPickupSetModels());
+            }
+        }
+
+        private void showProgress(boolean showProgress) {
+            if (showProgress) {
+                loadingProgress.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.INVISIBLE);
+                txtComingSoon.setVisibility(View.GONE);
+                txtRetry.setVisibility(View.GONE);
+            }
+            else {
+                loadingProgress.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+                txtComingSoon.setVisibility(View.GONE);
+                txtRetry.setVisibility(View.GONE);
+            }
+        }
+
+        public void getDRListFromServer() {
+            if (ActivityUtils.isNetworkConnected(this.getContext())) {
+                showProgress(true);
+                LoginResponse loginResponse = RDApplication.getAppOwnerData();
+
+                APIClient.getClient().getDeliveryList(loginResponse.getUserName(), loginResponse.getPassword(), loginResponse.getEmp_id())
+                .enqueue(new Callback<DeliveryResponseModel>() {
+                    @Override
+                    public void onResponse(Call<DeliveryResponseModel> call, Response<DeliveryResponseModel> response) {
+                        DeliveryResponseModel responseModel = response.body();
+                        switch (responseModel.getStatusCode()) {
+                            case "200" :
+                                List<DeliveryModel> deliveryModels = new ArrayList<>();
+                                DeliveryModel deliveryModel;
+                                for (DeliveryResponseModel.DeliveryModel deliveryModelFromServer : response.body().getDelivery()) {
+                                    deliveryModel = new DeliveryModel();
+                                    deliveryModel.setHeader(true);
+                                    deliveryModel.setDeliveryNumber(deliveryModelFromServer.getDispatch_number());
+                                    deliveryModels.add(deliveryModel);
+                                    for (DeliveryResponseModel.DeliveryModel.ShipmentModel shipmentModel : deliveryModelFromServer.getShipments()) {
+                                        deliveryModel = new DeliveryModel();
+                                        deliveryModel.setPincode(shipmentModel.getPincode());
+                                        deliveryModel.setName(shipmentModel.getName());
+                                        deliveryModel.setAddress1(shipmentModel.getAddress_1());
+                                        deliveryModel.setAddress2(shipmentModel.getAddress_2());
+                                        deliveryModel.setAwb(shipmentModel.getAwb());
+                                        deliveryModel.setDispatchCount(shipmentModel.getDispatch_count());
+                                        deliveryModel.setFlow(shipmentModel.getFlow());
+                                        deliveryModel.setLat(shipmentModel.getLat());
+                                        deliveryModel.setLng(shipmentModel.getLng());
+                                        deliveryModel.setStatus(shipmentModel.getStatus());
+                                        deliveryModel.setValue(shipmentModel.getValue());
+                                        deliveryModel.setMode(shipmentModel.getMode());
+                                        deliveryModel.setHeader(false);
+                                        deliveryModel.setDeliveryNumber(deliveryModelFromServer.getDispatch_number());
+                                        deliveryModels.add(deliveryModel);
+                                    }
+                                }
+                                showProgress(false);
+                                RDApplication.setDeliveryModels(deliveryModels);
+                                break;
+                            case "400" :
+                                Toast.makeText(mContext, responseModel.getMessage(), Toast.LENGTH_SHORT).show();
+                                break;
+                            case "401" :
+                                Toast.makeText(mContext, responseModel.getMessage(), Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<DeliveryResponseModel> call, Throwable t) {
+                        t.printStackTrace();
+                        showProgress(false);
+                        Toast.makeText(mContext, "Error in loading Delivery list", Toast.LENGTH_SHORT).show();
+                        loadingProgress.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.GONE);
+                        txtComingSoon.setVisibility(View.GONE);
+                        txtRetry.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+            else {
+                Toast.makeText(mContext, "Check your internet connection", Toast.LENGTH_SHORT).show();
+                loadingProgress.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
+                txtComingSoon.setVisibility(View.GONE);
+                txtRetry.setVisibility(View.VISIBLE);
             }
         }
     }

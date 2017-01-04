@@ -1,8 +1,10 @@
 package co.rapiddelivery;
 
 import android.app.Application;
+import android.text.TextUtils;
 
 import com.activeandroid.ActiveAndroid;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -13,6 +15,7 @@ import co.rapiddelivery.models.DeliveryModel;
 import co.rapiddelivery.models.PickUpModel;
 import co.rapiddelivery.models.PickupSetModel;
 import co.rapiddelivery.network.LoginResponse;
+import co.rapiddelivery.utils.SPrefUtils;
 
 /**
  * Created by Kunal on 15/12/16.
