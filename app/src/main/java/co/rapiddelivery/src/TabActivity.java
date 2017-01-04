@@ -301,13 +301,19 @@ public class TabActivity extends AppCompatActivity {
         @Override
         public void onPause() {
             super.onPause();
-            EventBus.getDefault().register(this);
+            EventBus.getDefault().unregister(this);
         }
 
         @Override
         public void onResume() {
             super.onResume();
             EventBus.getDefault().register(this);
+            if (sectionNumber == 1) {
+                deliveryAdapter.setDeliveryList(RDApplication.getDeliveryModels());
+            }
+            if (sectionNumber == 2) {
+                pickUpAdapter.setPickUpModelList(RDApplication.getPickupSetModel().getPickupSetModels());
+            }
         }
     }
 
