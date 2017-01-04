@@ -145,7 +145,7 @@ public class TabActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<DeliveryResponseModel> call, Response<DeliveryResponseModel> response) {
                 List<DeliveryModel> deliveryModels = new ArrayList<>();
-                if (response != null) {
+                if (response != null && response.body() != null) {
                     DeliveryModel deliveryModel;
                     for (DeliveryResponseModel.DeliveryModel deliveryModelFromServer : response.body().getDelivery()) {
                         deliveryModel = new DeliveryModel();
