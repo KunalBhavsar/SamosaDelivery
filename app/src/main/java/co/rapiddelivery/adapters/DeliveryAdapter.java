@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import co.rapiddelivery.models.DeliveryModel;
@@ -24,6 +25,14 @@ public class DeliveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private Context mContext;
     private List<DeliveryModel> deliveryList;
     private final OnItemClickListener listener;
+
+    public void setDeliveryList(List<DeliveryModel> deliveryList) {
+        if (deliveryList == null) {
+            deliveryList = new ArrayList<>();
+        }
+        this.deliveryList = deliveryList;
+        notifyDataSetChanged();
+    }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public CustomTextView txtCustName, txtCustAddress, txtAmount;

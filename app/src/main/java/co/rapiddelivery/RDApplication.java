@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.activeandroid.ActiveAndroid;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,39 +36,7 @@ public class RDApplication extends Application {
 
     private void initializeDummyData() {
         deliveryModels = new ArrayList<>();
-
         pickupSetModel = new PickupSetModel();
-        for (int i = 0; i < 6; i++) {
-            PickUpModel pickUpModel = new PickUpModel();
-            pickUpModel.setPickupNumber(i + "");
-            switch (i % 3) {
-                case 0 :
-                    pickUpModel.setName("Kunal Bhavsar");
-                    pickUpModel.setAddress("11, ABBK, Mahajan Wadi, Opp. Central Railway Workshop, Parel - Mumbai");
-                    pickUpModel.setPincode("400012");
-                    pickUpModel.setCutOffTime((i + 1));
-                    pickUpModel.setLatitude(19.0022 + (i * 0.0001 * 19));
-                    pickUpModel.setLongitude(72.8416 - (i * 0.0001 * 19));
-                    break;
-                case 1 :
-                    pickUpModel.setName("Shraddha Pednekar");
-                    pickUpModel.setAddress("27, Jagruti Building, Devipada, near National Park, Boriwali - Mumbai");
-                    pickUpModel.setPincode("400012");
-                    pickUpModel.setCutOffTime((i + 1));
-                    pickUpModel.setLatitude(19.0022 + (i * 0.0001 * 13));
-                    pickUpModel.setLongitude(72.8416 - (i * 0.0001 * 13));
-                    break;
-                case 2:
-                    pickUpModel.setName("Yojana Rangnekar");
-                    pickUpModel.setAddress("3, Shivaji Park, Dangal Road, Virar - Thane");
-                    pickUpModel.setPincode("471012");
-                    pickUpModel.setCutOffTime((i + 1));
-                    pickUpModel.setLatitude(19.0022 + (i * 0.0001 * 17));
-                    pickUpModel.setLongitude(72.8416 - (i * 0.0001 * 17));
-                    break;
-            }
-            pickupSetModel.getPickupSetModels().add(pickUpModel);
-        }
     }
 
     public static PickupSetModel getPickupSetModel() {
@@ -77,6 +47,10 @@ public class RDApplication extends Application {
     }
 
     public static void setPickupSetModel(PickupSetModel pickupSetModel) {
+        if (pickupSetModel == null) {
+            pickupSetModel = new PickupSetModel();
+        }
+        EventBus.getDefault().post(new PickupDataUpdatedEvent(pickupSetModel));
         RDApplication.pickupSetModel = pickupSetModel;
     }
 
@@ -88,7 +62,11 @@ public class RDApplication extends Application {
     }
 
     public static void setDeliveryModels(List<DeliveryModel> deliveryModels) {
+        if (deliveryModels == null) {
+            deliveryModels = new ArrayList<>();
+        }
         RDApplication.deliveryModels = deliveryModels;
+        EventBus.getDefault().post(new DeliveryDataUpdatedEvent(deliveryModels));
     }
 
     public static LoginResponse getAppOwnerData() {
@@ -125,5 +103,32 @@ public class RDApplication extends Application {
             }
         }
         return null;
+    }
+
+    public static class DeliveryDataUpdatedEvent {
+
+        public DeliveryDataUpdatedEvent(List<DeliveryModel> deliveryModels) {
+            this.deliveryModels = deliveryModels;
+        }
+
+        public final List<DeliveryModel> deliveryModels;
+    }
+
+    public static class PickupDataUpdatedEvent {
+
+        public PickupDataUpdatedEvent(PickupSetModel pickupSetModel) {
+            this.pickupSetModel = pickupSetModel;
+        }
+
+        public final PickupSetModel pickupSetModel;
+    }
+
+    public static class AppOwnerDataUpdatedEvent {
+
+        public AppOwnerDataUpdatedEvent(LoginResponse loginResponse) {
+            this.loginResponse = loginResponse;
+        }
+
+        public final LoginResponse loginResponse;
     }
 }

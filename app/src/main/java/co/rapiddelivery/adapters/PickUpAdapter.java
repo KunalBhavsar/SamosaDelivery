@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import co.rapiddelivery.models.PickUpModel;
@@ -21,6 +22,14 @@ public class PickUpAdapter extends RecyclerView.Adapter<PickUpAdapter.MyViewHold
     private Context mContext;
     private List<PickUpModel> pickUpModelList;
     private final PickUpAdapter.OnItemClickListener listener;
+
+    public void setPickUpModelList(List<PickUpModel> pickUpModelList) {
+        if (pickUpModelList == null) {
+            pickUpModelList = new ArrayList<>();
+        }
+        this.pickUpModelList = pickUpModelList;
+        notifyDataSetChanged();
+    }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public CustomTextView txtCustName, txtCustAddress, txtAmount;

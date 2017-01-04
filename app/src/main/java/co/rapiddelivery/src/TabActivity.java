@@ -21,8 +21,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +86,13 @@ public class TabActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
+
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+        tabLayout.setupWithViewPager(mViewPager);
     }
 
 
@@ -129,51 +141,77 @@ public class TabActivity extends AppCompatActivity {
         LoginResponse loginResponse = new Gson().fromJson(loginDetails, LoginResponse.class);
 
         APIClient.getClient().getList(loginResponse.getUserName(), loginResponse.getPassword(), Integer.parseInt(loginResponse.getEmp_id()))
-                .enqueue(new Callback<DeliveryResponseModel>() {
-                    @Override
-                    public void onResponse(Call<DeliveryResponseModel> call, Response<DeliveryResponseModel> response) {
-                        List<DeliveryModel> deliveryModels = new ArrayList<>();
-                        if (response != null) {
-                            DeliveryModel deliveryModel;
-                            for (DeliveryResponseModel.DeliveryModel deliveryModelFromServer : response.body().getDelivery()) {
-                                deliveryModel = new DeliveryModel();
-                                deliveryModel.setHeader(true);
-                                deliveryModel.setDeliveryNumber(deliveryModelFromServer.getDispatch_number());
-                                deliveryModels.add(deliveryModel);
-                                for (DeliveryResponseModel.DeliveryModel.ShipmentModel shipmentModel : deliveryModelFromServer.getShipments()) {
-                                    deliveryModel = new DeliveryModel();
-                                    deliveryModel.setPincode(shipmentModel.getPincode());
-                                    deliveryModel.setName(shipmentModel.getName());
-                                    deliveryModel.setAddress1(shipmentModel.getAddress_1());
-                                    deliveryModel.setAddress2(shipmentModel.getAddress_2());
-                                    deliveryModel.setAwb(shipmentModel.getAwb());
-                                    deliveryModel.setDispatchCount(shipmentModel.getDispatch_count());
-                                    deliveryModel.setFlow(shipmentModel.getFlow());
-                                    deliveryModel.setLat(shipmentModel.getLat());
-                                    deliveryModel.setLng(shipmentModel.getLng());
-                                    deliveryModel.setStatus(shipmentModel.getStatus());
-                                    deliveryModel.setValue(shipmentModel.getValue());
-                                    deliveryModel.setMode(shipmentModel.getMode());
-                                    deliveryModel.setHeader(false);
-                                    deliveryModel.setDeliveryNumber(deliveryModelFromServer.getDispatch_number());
-                                    deliveryModels.add(deliveryModel);
-                                }
-                            }
+            .enqueue(new Callback<DeliveryResponseModel>() {
+            @Override
+            public void onResponse(Call<DeliveryResponseModel> call, Response<DeliveryResponseModel> response) {
+                List<DeliveryModel> deliveryModels = new ArrayList<>();
+                if (response != null) {
+                    DeliveryModel deliveryModel;
+                    for (DeliveryResponseModel.DeliveryModel deliveryModelFromServer : response.body().getDelivery()) {
+                        deliveryModel = new DeliveryModel();
+                        deliveryModel.setHeader(true);
+                        deliveryModel.setDeliveryNumber(deliveryModelFromServer.getDispatch_number());
+                        deliveryModels.add(deliveryModel);
+                        for (DeliveryResponseModel.DeliveryModel.ShipmentModel shipmentModel : deliveryModelFromServer.getShipments()) {
+                            deliveryModel = new DeliveryModel();
+                            deliveryModel.setPincode(shipmentModel.getPincode());
+                            deliveryModel.setName(shipmentModel.getName());
+                            deliveryModel.setAddress1(shipmentModel.getAddress_1());
+                            deliveryModel.setAddress2(shipmentModel.getAddress_2());
+                            deliveryModel.setAwb(shipmentModel.getAwb());
+                            deliveryModel.setDispatchCount(shipmentModel.getDispatch_count());
+                            deliveryModel.setFlow(shipmentModel.getFlow());
+                            deliveryModel.setLat(shipmentModel.getLat());
+                            deliveryModel.setLng(shipmentModel.getLng());
+                            deliveryModel.setStatus(shipmentModel.getStatus());
+                            deliveryModel.setValue(shipmentModel.getValue());
+                            deliveryModel.setMode(shipmentModel.getMode());
+                            deliveryModel.setHeader(false);
+                            deliveryModel.setDeliveryNumber(deliveryModelFromServer.getDispatch_number());
+                            deliveryModels.add(deliveryModel);
                         }
-                        RDApplication.setDeliveryModels(deliveryModels);
-                        // Create the adapter that will return a fragment for each of the three
-                        // primary sections of the activity.
-                        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-                        mViewPager.setAdapter(mSectionsPagerAdapter);
-                        tabLayout.setupWithViewPager(mViewPager);
                     }
+                }
+                RDApplication.setDeliveryModels(deliveryModels);
+            }
 
-                    @Override
-                    public void onFailure(Call<DeliveryResponseModel> call, Throwable t) {
-                        t.printStackTrace();
+            @Override
+            public void onFailure(Call<DeliveryResponseModel> call, Throwable t) {
+                t.printStackTrace();
+                for (int i = 0; i < 6; i++) {
+                    PickUpModel pickUpModel = new PickUpModel();
+                    pickUpModel.setPickupNumber(i + "");
+                    switch (i % 3) {
+                        case 0 :
+                            pickUpModel.setName("Kunal Bhavsar");
+                            pickUpModel.setAddress("11, ABBK, Mahajan Wadi, Opp. Central Railway Workshop, Parel - Mumbai");
+                            pickUpModel.setPincode("400012");
+                            pickUpModel.setCutOffTime((i + 1));
+                            pickUpModel.setLatitude(19.0022 + (i * 0.0001 * 19));
+                            pickUpModel.setLongitude(72.8416 - (i * 0.0001 * 19));
+                            break;
+                        case 1 :
+                            pickUpModel.setName("Shraddha Pednekar");
+                            pickUpModel.setAddress("27, Jagruti Building, Devipada, near National Park, Boriwali - Mumbai");
+                            pickUpModel.setPincode("400012");
+                            pickUpModel.setCutOffTime((i + 1));
+                            pickUpModel.setLatitude(19.0022 + (i * 0.0001 * 13));
+                            pickUpModel.setLongitude(72.8416 - (i * 0.0001 * 13));
+                            break;
+                        case 2:
+                            pickUpModel.setName("Yojana Rangnekar");
+                            pickUpModel.setAddress("3, Shivaji Park, Dangal Road, Virar - Thane");
+                            pickUpModel.setPincode("471012");
+                            pickUpModel.setCutOffTime((i + 1));
+                            pickUpModel.setLatitude(19.0022 + (i * 0.0001 * 17));
+                            pickUpModel.setLongitude(72.8416 - (i * 0.0001 * 17));
+                            break;
                     }
-                });
+                    RDApplication.getPickupSetModel().getPickupSetModels().add(pickUpModel);
+                }
+                EventBus.getDefault().post(new RDApplication.PickupDataUpdatedEvent(RDApplication.getPickupSetModel()));
+            }
+        });
     }
 
     /**
@@ -186,6 +224,9 @@ public class TabActivity extends AppCompatActivity {
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
         private RecyclerView recyclerView;
+        private DeliveryAdapter deliveryAdapter;
+        private PickUpAdapter pickUpAdapter;
+        private int sectionNumber;
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -205,10 +246,9 @@ public class TabActivity extends AppCompatActivity {
             View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
             recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
 
-            int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+            sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
             if (sectionNumber == 1) {
-                List<DeliveryModel> deliveryModels = RDApplication.getDeliveryModels();
-                DeliveryAdapter adapter = new DeliveryAdapter(this.getContext(), deliveryModels, new DeliveryAdapter.OnItemClickListener() {
+                deliveryAdapter = new DeliveryAdapter(this.getContext(), RDApplication.getDeliveryModels(), new DeliveryAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(DeliveryModel deliveryModel) {
                         Intent intent = new Intent(getActivity(), DeliveryDetailsActivity.class);
@@ -221,11 +261,10 @@ public class TabActivity extends AppCompatActivity {
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
                 recyclerView.setLayoutManager(mLayoutManager);
                 recyclerView.setItemAnimator(new DefaultItemAnimator());
-                recyclerView.setAdapter(adapter);
+                recyclerView.setAdapter(deliveryAdapter);
             }
             else if (sectionNumber == 2) {
-                List<PickUpModel> deliveryModels = RDApplication.getPickupSetModel().getPickupSetModels();
-                PickUpAdapter adapter = new PickUpAdapter(this.getContext(), deliveryModels, new PickUpAdapter.OnItemClickListener() {
+                pickUpAdapter = new PickUpAdapter(this.getContext(), RDApplication.getPickupSetModel().getPickupSetModels(), new PickUpAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(PickUpModel pickUpModel) {
                         Intent intent = new Intent(getActivity(), PickUpDetailsActivity.class);
@@ -237,10 +276,38 @@ public class TabActivity extends AppCompatActivity {
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
                 recyclerView.setLayoutManager(mLayoutManager);
                 recyclerView.setItemAnimator(new DefaultItemAnimator());
-                recyclerView.setAdapter(adapter);
+                recyclerView.setAdapter(pickUpAdapter);
             }
 
             return rootView;
+        }
+
+        @Subscribe(threadMode = ThreadMode.MAIN)
+        public void onDeliveryDataUpdatedEvent(RDApplication.DeliveryDataUpdatedEvent event) {
+            Toast.makeText(getActivity(), "Delivery data updated", Toast.LENGTH_SHORT).show();
+            if (sectionNumber == 1) {
+                deliveryAdapter.setDeliveryList(event.deliveryModels);
+            }
+        }
+
+        @Subscribe(threadMode = ThreadMode.MAIN)
+        public void onPickupDataUpdatedEvent(RDApplication.PickupDataUpdatedEvent event) {
+            Toast.makeText(getActivity(), "Pickup data updated", Toast.LENGTH_SHORT).show();
+            if (sectionNumber == 2) {
+                pickUpAdapter.setPickUpModelList(event.pickupSetModel.getPickupSetModels());
+            }
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            EventBus.getDefault().register(this);
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            EventBus.getDefault().register(this);
         }
     }
 
