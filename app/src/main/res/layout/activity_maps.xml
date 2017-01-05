@@ -2,31 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
-
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" >
-            <Switch
-                android:id="@+id/btn_switch"
-                android:layout_width="80dp"
-                android:layout_height="50dp"
-                android:gravity="end"
-                android:textOn="Start"
-                android:textColor="#000"
-                android:textOff="Stop"/>
-        </android.widget.Toolbar>
-
-    </android.support.design.widget.AppBarLayout>
 
     <fragment android:id="@+id/map"
               android:name="com.google.android.gms.maps.SupportMapFragment"

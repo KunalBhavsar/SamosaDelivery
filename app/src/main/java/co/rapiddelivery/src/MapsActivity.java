@@ -70,8 +70,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final float DEFAULT_ZOOM = 1.0f;
     private static final String LOCATION_JOB = "location_service";
 
-    private Switch switchState;
-
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
 
@@ -93,13 +91,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mActivityContext = this;
         mAppContext = getApplicationContext();
 
-        switchState = (Switch) findViewById(R.id.btn_switch);
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        // getActionBar().setDisplayHomeAsUpEnabled(true);
 
         buildGoogleApiClient();
         mGoogleApiClient.connect();
@@ -108,33 +102,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
-
-        final FirebaseJobDispatcher firebaseJobDispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(MapsActivity.this));
-        final Job locationJob = firebaseJobDispatcher.newJobBuilder()
-                .setService(LocationJobService.class)
-                .setTag(LOCATION_JOB)
-                .setRecurring(true)
-                .setLifetime(Lifetime.FOREVER)
-                .setTrigger(Trigger.executionWindow(2, 25))
-                .build();
-
-        // TODO: 18/12/16 Check gps is on
-        switchState.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                //Intent intent = new Intent(MapsActivity.this, LocationService.class);
-                AlarmReceiver alarmReceiver = new AlarmReceiver();
-                if(b) {
-                    alarmReceiver.setDailyUpdateAlarm(getApplicationContext());
-                    //startService(intent);
-                    //firebaseJobDispatcher.mustSchedule(locationJob);
-                } else {
-                    alarmReceiver.cancelAlarm(getApplicationContext());
-                    //stopService(intent);
-                    //firebaseJobDispatcher.cancel(LOCATION_JOB);
-                }
-            }
-        });
     }
 
 

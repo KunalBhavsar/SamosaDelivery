@@ -43,6 +43,7 @@ import co.rapiddelivery.network.APIClient;
 import co.rapiddelivery.network.DeliveryResponseModel;
 import co.rapiddelivery.network.LoginResponse;
 import co.rapiddelivery.utils.ActivityUtils;
+import co.rapiddelivery.receiver.AlarmReceiver;
 import co.rapiddelivery.utils.KeyConstants;
 import co.rapiddelivery.utils.SPrefUtils;
 import co.rapiddelivery.views.CustomTextView;
@@ -134,6 +135,8 @@ public class TabActivity extends AppCompatActivity {
         RDApplication.setPickupSetModel(null);
         Intent intent = new Intent(mActivityContext, LoginActivity.class);
         mActivityContext.startActivity(intent);
+        AlarmReceiver alarmReceiver = new AlarmReceiver();
+        alarmReceiver.cancelAlarm(getApplicationContext());
         finish();
     }
 
@@ -181,7 +184,6 @@ public class TabActivity extends AppCompatActivity {
             mContext = this.getContext();
 
             sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-
             if (sectionNumber == 1) {
                 deliveryAdapter = new DeliveryAdapter(this.getContext(), RDApplication.getDeliveryModels(), new DeliveryAdapter.OnItemClickListener() {
                     @Override
@@ -197,10 +199,18 @@ public class TabActivity extends AppCompatActivity {
                 recyclerView.setLayoutManager(mLayoutManager);
                 recyclerView.setItemAnimator(new DefaultItemAnimator());
                 recyclerView.setAdapter(deliveryAdapter);
+
+                txtRetry.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        getDRListFromServer();
+                    }
+                });
             }
             else if (sectionNumber == 2) {
                 txtComingSoon.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.GONE);
+                txtRetry.setVisibility(View.GONE);
 
                 pickUpAdapter = new PickUpAdapter(this.getContext(), RDApplication.getPickupSetModel().getPickupSetModels(), new PickUpAdapter.OnItemClickListener() {
                     @Override
@@ -318,11 +328,10 @@ public class TabActivity extends AppCompatActivity {
                                 showProgress(false);
                                 RDApplication.setDeliveryModels(deliveryModels);
                                 break;
-                            case "400" :
+                            default:
+                                showProgress(false);
                                 Toast.makeText(mContext, responseModel.getMessage(), Toast.LENGTH_SHORT).show();
-                                break;
-                            case "401" :
-                                Toast.makeText(mContext, responseModel.getMessage(), Toast.LENGTH_SHORT).show();
+                                showRetryOption();
                                 break;
                         }
                     }
@@ -332,20 +341,21 @@ public class TabActivity extends AppCompatActivity {
                         t.printStackTrace();
                         showProgress(false);
                         Toast.makeText(mContext, "Error in loading Delivery list", Toast.LENGTH_SHORT).show();
-                        loadingProgress.setVisibility(View.GONE);
-                        recyclerView.setVisibility(View.GONE);
-                        txtComingSoon.setVisibility(View.GONE);
-                        txtRetry.setVisibility(View.VISIBLE);
+                        showRetryOption();
                     }
                 });
             }
             else {
                 Toast.makeText(mContext, "Check your internet connection", Toast.LENGTH_SHORT).show();
-                loadingProgress.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.GONE);
-                txtComingSoon.setVisibility(View.GONE);
-                txtRetry.setVisibility(View.VISIBLE);
+                showRetryOption();
             }
+        }
+
+        private void showRetryOption() {
+            loadingProgress.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
+            txtComingSoon.setVisibility(View.GONE);
+            txtRetry.setVisibility(View.VISIBLE);
         }
     }
 

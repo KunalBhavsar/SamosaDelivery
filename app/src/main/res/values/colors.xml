@@ -19,4 +19,23 @@
     <color name="yellow">#f3a80b</color>
     <color name="red">#e74c3c</color>
 
+    <color name="blue_login_btn">#5856d6</color>
+    <color name="black_text">#19191a</color>
+    <color name="white">#ffffff</color>
+    <color name="orange_login_btn">#ff9500</color>
+    <color name="grey">#8c8a88</color>
+    <color name="grey_e7e6e5">#e7e6e5</color>
+    <color name="grey_dashboard">#E8E8E8</color>
+    <color name="grey_text">#515150</color>
+    <color name="grey_line">#E5E5E5</color>
+    <color name="hint_color">#a3a3a3</color>
+
+    <color name="green_text">#0a591d</color>
+    <color name="green_39de40">#39de40</color>
+    <color name="red_text">#F44336</color>
+    <color name="blue_text">#5464BD</color>
+    <color name="separator">#303F9F</color>
+    <color name="selector">#80BBBBBB</color>
+    <color name="colorSilver">#C0C0C0</color>
+
 </resources>

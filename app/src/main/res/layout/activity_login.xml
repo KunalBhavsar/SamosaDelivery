@@ -53,13 +53,11 @@
 
                     <ImageView
                         android:id="@+id/img_logo"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/_80dp"
+                        android:layout_height="@dimen/_80dp"
                         android:layout_centerInParent="true"
-                        android:paddingLeft="@dimen/_20dp"
-                        android:paddingRight="@dimen/_20dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/rdlogo" />
+                        android:scaleType="fitXY"
+                        android:src="@mipmap/ic_launcher"/>
 
                 </RelativeLayout>
 
