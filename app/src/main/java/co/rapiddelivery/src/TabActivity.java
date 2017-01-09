@@ -114,14 +114,20 @@ public class TabActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-            onLogoutClicked();
-            return true;
-        }
-        if (id == R.id.action_switch_to_map) {
-            Intent intent = new Intent(TabActivity.this, MapsActivity.class);
-            TabActivity.this.startActivity(intent);
-            return true;
+        switch (id) {
+            case R.id.action_logout:
+                onLogoutClicked();
+                return true;
+            case R.id.action_search:
+                // TODO: 9/1/17 search
+                return true;
+            case R.id.action_filter:
+                // TODO: 9/1/17 filter
+                return true;
+            case R.id.action_switch_to_map:
+                Intent intent = new Intent(TabActivity.this, MapsActivity.class);
+                TabActivity.this.startActivity(intent);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
