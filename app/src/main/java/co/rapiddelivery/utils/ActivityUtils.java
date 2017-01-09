@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -13,6 +15,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.List;
+
+import co.rapiddelivery.intf.OnDialogClickListener;
 import co.rapiddelivery.src.R;
 
 public class ActivityUtils {
@@ -54,6 +59,26 @@ public class ActivityUtils {
         NetworkInfo activeNetworkInfo = connectivityManager
                 .getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+
+    public static void showFilterDialog(Context context, List<String> filterList, final OnDialogClickListener intf) {
+
+        final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.filter_selection_dialog);
+        RecyclerView recyclerView = (RecyclerView) dialog.findViewById(R.id.recycle_list_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        SimpleDialogAdapter simpleDialogAdapter = new SimpleDialogAdapter(new OnDialogClickListener() {
+            @Override
+            public void onClick(String filterType) {
+                dialog.dismiss();
+                intf.onClick(filterType);
+            }
+        });
+        recyclerView.setAdapter(simpleDialogAdapter);
+        simpleDialogAdapter.setData(filterList);
+        dialog.show();
     }
 
 }

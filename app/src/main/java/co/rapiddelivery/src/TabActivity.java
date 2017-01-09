@@ -32,11 +32,13 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import co.rapiddelivery.RDApplication;
 import co.rapiddelivery.adapters.DeliveryAdapter;
 import co.rapiddelivery.adapters.PickUpAdapter;
+import co.rapiddelivery.intf.OnDialogClickListener;
 import co.rapiddelivery.models.DeliveryModel;
 import co.rapiddelivery.models.PickUpModel;
 import co.rapiddelivery.network.APIClient;
@@ -122,7 +124,7 @@ public class TabActivity extends AppCompatActivity {
                 // TODO: 9/1/17 search
                 return true;
             case R.id.action_filter:
-                // TODO: 9/1/17 filter
+                onFilterClick();
                 return true;
             case R.id.action_switch_to_map:
                 Intent intent = new Intent(TabActivity.this, MapsActivity.class);
@@ -131,6 +133,18 @@ public class TabActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void onFilterClick() {
+        String[] type = new String[]{"COD", "DELIVERED"};
+        List<String> filterList = new ArrayList<>();
+        filterList.addAll(Arrays.asList(type));
+        ActivityUtils.showFilterDialog(this, filterList, new OnDialogClickListener() {
+            @Override
+            public void onClick(String filterType) {
+                // TODO: 9/1/17 perform filtering
+            }
+        });
     }
 
     private void onLogoutClicked() {
