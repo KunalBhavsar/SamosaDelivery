@@ -297,42 +297,48 @@ public class TabActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<DeliveryResponseModel> call, Response<DeliveryResponseModel> response) {
                         DeliveryResponseModel responseModel = response.body();
-                        switch (responseModel.getStatusCode()) {
-                            case "200" :
-                                List<DeliveryModel> deliveryModels = new ArrayList<>();
-                                DeliveryModel deliveryModel;
-                                for (DeliveryResponseModel.DeliveryModel deliveryModelFromServer : response.body().getDelivery()) {
-                                    deliveryModel = new DeliveryModel();
-                                    deliveryModel.setHeader(true);
-                                    deliveryModel.setDeliveryNumber(deliveryModelFromServer.getDispatch_number());
-                                    deliveryModels.add(deliveryModel);
-                                    for (DeliveryResponseModel.DeliveryModel.ShipmentModel shipmentModel : deliveryModelFromServer.getShipments()) {
+                        if(null != responseModel) {
+                            switch (responseModel.getStatusCode()) {
+                                case "200":
+                                    List<DeliveryModel> deliveryModels = new ArrayList<>();
+                                    DeliveryModel deliveryModel;
+                                    for (DeliveryResponseModel.DeliveryModel deliveryModelFromServer : response.body().getDelivery()) {
                                         deliveryModel = new DeliveryModel();
-                                        deliveryModel.setPincode(shipmentModel.getPincode());
-                                        deliveryModel.setName(shipmentModel.getName());
-                                        deliveryModel.setAddress1(shipmentModel.getAddress_1());
-                                        deliveryModel.setAddress2(shipmentModel.getAddress_2());
-                                        deliveryModel.setAwb(shipmentModel.getAwb());
-                                        deliveryModel.setDispatchCount(shipmentModel.getDispatch_count());
-                                        deliveryModel.setFlow(shipmentModel.getFlow());
-                                        deliveryModel.setLat(shipmentModel.getLat());
-                                        deliveryModel.setLng(shipmentModel.getLng());
-                                        deliveryModel.setStatus(shipmentModel.getStatus());
-                                        deliveryModel.setValue(shipmentModel.getValue());
-                                        deliveryModel.setMode(shipmentModel.getMode());
-                                        deliveryModel.setHeader(false);
+                                        deliveryModel.setHeader(true);
                                         deliveryModel.setDeliveryNumber(deliveryModelFromServer.getDispatch_number());
                                         deliveryModels.add(deliveryModel);
+                                        for (DeliveryResponseModel.DeliveryModel.ShipmentModel shipmentModel : deliveryModelFromServer.getShipments()) {
+                                            deliveryModel = new DeliveryModel();
+                                            deliveryModel.setPincode(shipmentModel.getPincode());
+                                            deliveryModel.setName(shipmentModel.getName());
+                                            deliveryModel.setAddress1(shipmentModel.getAddress_1());
+                                            deliveryModel.setAddress2(shipmentModel.getAddress_2());
+                                            deliveryModel.setAwb(shipmentModel.getAwb());
+                                            deliveryModel.setDispatchCount(shipmentModel.getDispatch_count());
+                                            deliveryModel.setFlow(shipmentModel.getFlow());
+                                            deliveryModel.setLat(shipmentModel.getLat());
+                                            deliveryModel.setLng(shipmentModel.getLng());
+                                            deliveryModel.setStatus(shipmentModel.getStatus());
+                                            deliveryModel.setValue(shipmentModel.getValue());
+                                            deliveryModel.setMode(shipmentModel.getMode());
+                                            deliveryModel.setHeader(false);
+                                            deliveryModel.setDeliveryNumber(deliveryModelFromServer.getDispatch_number());
+                                            deliveryModels.add(deliveryModel);
+                                        }
                                     }
-                                }
-                                showProgress(false);
-                                RDApplication.setDeliveryModels(deliveryModels);
-                                break;
-                            default:
-                                showProgress(false);
-                                Toast.makeText(mContext, responseModel.getMessage(), Toast.LENGTH_SHORT).show();
-                                showRetryOption();
-                                break;
+                                    showProgress(false);
+                                    RDApplication.setDeliveryModels(deliveryModels);
+                                    break;
+                                default:
+                                    showProgress(false);
+                                    Toast.makeText(mContext, responseModel.getMessage(), Toast.LENGTH_SHORT).show();
+                                    showRetryOption();
+                                    break;
+                            }
+                        } else {
+                            showProgress(false);
+                            showRetryOption();
+                            Toast.makeText(mContext, "Error in loading Delivery list", Toast.LENGTH_SHORT).show();
                         }
                     }
 

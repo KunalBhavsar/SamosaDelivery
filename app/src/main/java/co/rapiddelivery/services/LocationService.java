@@ -126,7 +126,7 @@ public class LocationService extends Service implements LocationListener, Google
         //stopSelf();
 
         // TODO: 18/12/16 testing - whether this works in background or device is off
-        APIClient.getClient().submitLocation(loginResponse.getName(), loginResponse.getPassword(), batteryStatus, Double.toString(mLastLocation.getLatitude()), Double.toString(mLastLocation.getLongitude()))
+        APIClient.getClient().submitLocation(loginResponse.getUserName(), loginResponse.getPassword(), batteryStatus, Double.toString(mLastLocation.getLatitude()), Double.toString(mLastLocation.getLongitude()))
                 .enqueue(new Callback<ServerResponseBase>() {
                     @Override
                     public void onResponse(Call<ServerResponseBase> call, Response<ServerResponseBase> response) {

@@ -12,7 +12,10 @@ import android.util.Log;
 
 import co.rapiddelivery.services.LocationService;
 
+import static android.app.AlarmManager.INTERVAL_FIFTEEN_MINUTES;
+
 public class AlarmReceiver extends WakefulBroadcastReceiver {
+    private static final long INTERVAL_MINUTE = 60000;
     // The app's AlarmManager, which provides access to the system alarm services.
     private AlarmManager alarmMgr;
     // The pending intent that is triggered when the alarm fires.
@@ -33,7 +36,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         dailyAlarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 
         alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime(), AlarmManager.INTERVAL_DAY, dailyAlarmIntent);
+                SystemClock.elapsedRealtime(), INTERVAL_MINUTE, dailyAlarmIntent);
 
         // Enable {@code BootReceiver} to automatically restart the alarm when the
         // device is rebooted.
