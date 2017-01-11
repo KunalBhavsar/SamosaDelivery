@@ -27,7 +27,7 @@
 
     <co.rapiddelivery.views.CustomButton
         android:layout_below="@+id/txt_barcode_reading"
-        style="@style/button_orange"
+        style="@style/button_orange_large_rect"
         android:id="@+id/btn_read_barcode"
         android:layout_marginTop="@dimen/_10dp"
         android:text="Read Barcode"
@@ -36,7 +36,7 @@
 
     <co.rapiddelivery.views.CustomButton
         android:layout_below="@+id/txt_temp"
-        style="@style/button_orange"
+        style="@style/button_orange_large_rect"
         android:id="@+id/btn_close_camera"
         android:layout_marginTop="@dimen/_10dp"
         android:visibility="gone"

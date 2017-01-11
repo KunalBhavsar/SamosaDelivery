@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
@@ -16,13 +17,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -48,6 +52,7 @@ import co.rapiddelivery.utils.ActivityUtils;
 import co.rapiddelivery.receiver.AlarmReceiver;
 import co.rapiddelivery.utils.KeyConstants;
 import co.rapiddelivery.utils.SPrefUtils;
+import co.rapiddelivery.views.CustomEditText;
 import co.rapiddelivery.views.CustomTextView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -163,13 +168,15 @@ public class TabActivity extends AppCompatActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class PlaceholderFragment extends Fragment implements SearchView.OnQueryTextListener {
         /**
          * The fragment argument representing the section number for this
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
+        private RelativeLayout relActualContent;
+        private SearchView edtSearch;
         private RecyclerView recyclerView;
         private ProgressBar loadingProgress;
         private CustomTextView txtComingSoon;
@@ -196,6 +203,8 @@ public class TabActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
+            relActualContent = (RelativeLayout) rootView.findViewById(R.id.rel_actual_content);
+            edtSearch = (SearchView) rootView.findViewById(R.id.edt_search_text);
             recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
             loadingProgress = (ProgressBar) rootView.findViewById(R.id.loading_progress);
             txtComingSoon = (CustomTextView) rootView.findViewById(R.id.txt_coming_soon);
@@ -204,6 +213,9 @@ public class TabActivity extends AppCompatActivity {
             mContext = this.getContext();
 
             sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+
+            edtSearch.setOnQueryTextListener(this);
+
             if (sectionNumber == 1) {
                 deliveryAdapter = new DeliveryAdapter(this.getContext(), RDApplication.getDeliveryModels(), new DeliveryAdapter.OnItemClickListener() {
                     @Override
@@ -229,7 +241,7 @@ public class TabActivity extends AppCompatActivity {
             }
             else if (sectionNumber == 2) {
                 txtComingSoon.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
+                relActualContent.setVisibility(View.GONE);
                 txtRetry.setVisibility(View.GONE);
 
                 pickUpAdapter = new PickUpAdapter(this.getContext(), RDApplication.getPickupSetModel().getPickupSetModels(), new PickUpAdapter.OnItemClickListener() {
@@ -295,13 +307,13 @@ public class TabActivity extends AppCompatActivity {
         private void showProgress(boolean showProgress) {
             if (showProgress) {
                 loadingProgress.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.INVISIBLE);
+                relActualContent.setVisibility(View.INVISIBLE);
                 txtComingSoon.setVisibility(View.GONE);
                 txtRetry.setVisibility(View.GONE);
             }
             else {
                 loadingProgress.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
+                relActualContent.setVisibility(View.VISIBLE);
                 txtComingSoon.setVisibility(View.GONE);
                 txtRetry.setVisibility(View.GONE);
             }
@@ -379,9 +391,42 @@ public class TabActivity extends AppCompatActivity {
 
         private void showRetryOption() {
             loadingProgress.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.GONE);
+            relActualContent.setVisibility(View.GONE);
             txtComingSoon.setVisibility(View.GONE);
             txtRetry.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            final List<DeliveryModel> filteredModelList = filter(RDApplication.getDeliveryModels(), newText);
+            deliveryAdapter.setDeliveryList(filteredModelList);
+            recyclerView.scrollToPosition(0);
+            return true;
+        }
+
+        private static List<DeliveryModel> filter(List<DeliveryModel> models, String query) {
+            final String lowerCaseQuery = query.toLowerCase();
+            if (TextUtils.isEmpty(lowerCaseQuery)) {
+                return models;
+            }
+            else {
+                final List<DeliveryModel> filteredModelList = new ArrayList<>();
+                for (DeliveryModel model : models) {
+                    if (model.isHeader()) {
+                        continue;
+                    }
+                    final String text = model.getName().toLowerCase();
+                    if (text.contains(lowerCaseQuery)) {
+                        filteredModelList.add(model);
+                    }
+                }
+                return filteredModelList;
+            }
         }
     }
 

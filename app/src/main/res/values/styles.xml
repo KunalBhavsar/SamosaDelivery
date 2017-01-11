@@ -103,8 +103,23 @@
         <item name="android:textCursorDrawable">@null</item>
     </style>
 
-    <style name="button_orange" parent="textview_medium_text">
-        <item name="android:background">@drawable/rounded_rect_orange</item>
+    <style name="button_orange_large_rect" parent="textview_medium_text">
+        <item name="android:background">@drawable/rounded_rect_orange_large_curve</item>
+        <item name="android:textColor">@color/grey_dfdfdf</item>
+        <item name="font">@string/font_libre_franklin_regular</item>
+    </style>
+    <style name="button_orange_small_rect" parent="textview_medium_small_text">
+        <item name="android:background">@drawable/rounded_rect_orange_small_curve</item>
+        <item name="android:textColor">@color/grey_dfdfdf</item>
+        <item name="font">@string/font_libre_franklin_regular</item>
+    </style>
+    <style name="button_red_small_rect" parent="textview_medium_small_text">
+        <item name="android:background">@drawable/rounded_rect_red_small_curve</item>
+        <item name="android:textColor">@color/grey_dfdfdf</item>
+        <item name="font">@string/font_libre_franklin_regular</item>
+    </style>
+    <style name="button_green_small_rect" parent="textview_medium_small_text">
+        <item name="android:background">@drawable/rounded_rect_green_small_curve</item>
         <item name="android:textColor">@color/grey_dfdfdf</item>
         <item name="font">@string/font_libre_franklin_regular</item>
     </style>
