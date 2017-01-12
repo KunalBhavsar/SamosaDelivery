@@ -20,6 +20,7 @@
     <color name="red">#e74c3c</color>
 
     <color name="blue_login_btn">#5856d6</color>
+    <color name="blue">#1329d6</color>
     <color name="black_text">#19191a</color>
     <color name="white">#ffffff</color>
     <color name="orange_login_btn">#ff9500</color>
@@ -31,6 +32,7 @@
     <color name="hint_color">#a3a3a3</color>
 
     <color name="green_text">#0a591d</color>
+    <color name="green_status">#126024</color>
     <color name="green_39de40">#39de40</color>
     <color name="red_text">#F44336</color>
     <color name="blue_text">#5464BD</color>

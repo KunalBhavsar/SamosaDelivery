@@ -113,15 +113,19 @@ public class DeliveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             holder.txtCustAddress.setText(deliveryModel.getAddress1() + ", " + deliveryModel.getAddress2() + " - " + deliveryModel.getPincode());
             holder.txtAmount.setText(deliveryModel.getValue());
             holder.txtMode.setText(deliveryModel.getMode().toUpperCase());
-            if (deliveryModel.getMode().equalsIgnoreCase("cod")) {
+
+            if (!deliveryModel.getStatus().equalsIgnoreCase("Dispatched")) {
+                holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.green_status));
+            } else if (deliveryModel.getMode().equalsIgnoreCase("cod")) {
                 holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.yellow));
-            }
-            if (deliveryModel.getMode().equalsIgnoreCase("prepaid")) {
+            } else if (deliveryModel.getMode().equalsIgnoreCase("prepaid")) {
+                holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.blue));
+            }else if (deliveryModel.getMode().equalsIgnoreCase("reverse")) {
                 holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.red));
-            }
-            if (deliveryModel.getMode().equalsIgnoreCase("reverse")) {
+            } else {
                 holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey));
             }
+
             holder.setClickListener(deliveryModel, listener);
         }
     }
