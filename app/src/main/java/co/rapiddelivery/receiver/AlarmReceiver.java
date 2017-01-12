@@ -18,8 +18,6 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
     private static final long INTERVAL_MINUTE = 60000;
     // The app's AlarmManager, which provides access to the system alarm services.
     private AlarmManager alarmMgr;
-    // The pending intent that is triggered when the alarm fires.
-    private PendingIntent dailyAlarmIntent;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -32,11 +30,9 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
 
     public void setDailyUpdateAlarm(Context context) {
         alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, AlarmReceiver.class);
-        dailyAlarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 
         alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime(), INTERVAL_MINUTE, dailyAlarmIntent);
+                SystemClock.elapsedRealtime(), INTERVAL_MINUTE, getDailyAlarmIntent(context));
 
         // Enable {@code BootReceiver} to automatically restart the alarm when the
         // device is rebooted.
@@ -49,9 +45,10 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
     }
 
     public void cancelAlarm(Context context) {
+        alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         // If the alarm has been set, cancel it.
         if (alarmMgr!= null) {
-            alarmMgr.cancel(dailyAlarmIntent);
+            alarmMgr.cancel(getDailyAlarmIntent(context));
         }
 
         // Disable {@code BootReceiver} so that it doesn't automatically restart the
@@ -62,5 +59,11 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         pm.setComponentEnabledSetting(receiver,
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                 PackageManager.DONT_KILL_APP);
+    }
+
+    // The pending intent that is triggered when the alarm fires.
+    public PendingIntent getDailyAlarmIntent(Context context) {
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        return PendingIntent.getBroadcast(context, 0, intent, 0);
     }
 }
