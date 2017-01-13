@@ -46,30 +46,13 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         mActivityContext = this;
         mAppContext = getApplicationContext();
 
-        /* String deliveryNumber = getIntent().getStringExtra(KeyConstants.INTENT_EXTRA_DELIVERY_NUMBER);
+        String deliveryNumber = getIntent().getStringExtra(KeyConstants.INTENT_EXTRA_DELIVERY_NUMBER);
         String awb = getIntent().getStringExtra(KeyConstants.INTENT_EXTRA_SHIPMENT_AWB);
         deliveryModel = RDApplication.getDeliveryModelByTrackingNumberAndAWB(deliveryNumber, awb);
 
         if (deliveryModel == null) {
             Toast.makeText(mActivityContext, "Error in fetching delivery data..", Toast.LENGTH_SHORT).show();
             finish();
-        } */
-
-        if (deliveryModel == null) {
-            deliveryModel = new DeliveryModel();
-            deliveryModel.setDeliveryNumber("PQRS1234");
-            deliveryModel.setValue("1234");
-            deliveryModel.setHeader(false);
-            deliveryModel.setStatus("Pending");
-            deliveryModel.setLat(19.0022);
-            deliveryModel.setLng(72.8416);
-            deliveryModel.setAddress1("11, ABBK, Mahajan wadi, Parmar Guruji Marg, ");
-            deliveryModel.setAddress2("Opp. Central Railway Workshop, Parel");
-            deliveryModel.setAwb("ShipmentPQRS1234");
-            deliveryModel.setDispatchCount("5");
-            deliveryModel.setMode("COD");
-            deliveryModel.setName("Kunal Bhavsar");
-            deliveryModel.setPincode("400012");
         }
 
         relBeforeCallStart = (RelativeLayout) findViewById(R.id.rel_before_call_start_content);
@@ -88,6 +71,13 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         CustomButton btnDelivered = (CustomButton) findViewById(R.id.btn_delivered);
         CustomButton btnFailed = (CustomButton) findViewById(R.id.btn_failed);
         final ImageView imgSign = (ImageView) findViewById(R.id.img_sign_output);
+
+        if (deliveryModel.getStatus().equalsIgnoreCase("dispatched")) {
+            relBeforeCallStart.setVisibility(View.VISIBLE);
+        }
+        else {
+            relBeforeCallStart.setVisibility(View.GONE);
+        }
 
         btnStartDelivery.setOnClickListener(new View.OnClickListener() {
             @Override

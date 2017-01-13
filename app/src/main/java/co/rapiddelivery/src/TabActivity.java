@@ -1,6 +1,7 @@
 package co.rapiddelivery.src;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -21,6 +22,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +39,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import co.rapiddelivery.RDApplication;
@@ -105,53 +109,6 @@ public class TabActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_tab, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        switch (id) {
-            case R.id.action_logout:
-                onLogoutClicked();
-                return true;
-            case R.id.action_search:
-                // TODO: 9/1/17 search
-                return true;
-            case R.id.action_filter:
-                onFilterClick();
-                return true;
-            case R.id.action_switch_to_map:
-                Intent intent = new Intent(TabActivity.this, MapsActivity.class);
-                TabActivity.this.startActivity(intent);
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void onFilterClick() {
-        String[] type = new String[]{"COD", "DELIVERED"};
-        List<String> filterList = new ArrayList<>();
-        filterList.addAll(Arrays.asList(type));
-        ActivityUtils.showFilterDialog(this, filterList, new OnDialogClickListener() {
-            @Override
-            public void onClick(String filterType) {
-                // TODO: 9/1/17 perform filtering
-            }
-        });
-    }
-
     private void onLogoutClicked() {
         SPrefUtils.setIntegerPreference(mAppContext, SPrefUtils.LOGIN_STATUS, KeyConstants.LOGIN_STATUS_BLANK);
         SPrefUtils.setStringPreference(mAppContext, SPrefUtils.LOGGEDIN_USER_DETAILS, null);
@@ -175,8 +132,6 @@ public class TabActivity extends AppCompatActivity {
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
-        private RelativeLayout relActualContent;
-        private SearchView edtSearch;
         private RecyclerView recyclerView;
         private ProgressBar loadingProgress;
         private CustomTextView txtComingSoon;
@@ -187,6 +142,10 @@ public class TabActivity extends AppCompatActivity {
         private int sectionNumber;
 
         private Context mContext;
+        private Fragment fragment;
+        private String searchQuery;
+        private String filterType;
+
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -200,21 +159,24 @@ public class TabActivity extends AppCompatActivity {
         }
 
         @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setHasOptionsMenu(true);
+        }
+
+        @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
-            relActualContent = (RelativeLayout) rootView.findViewById(R.id.rel_actual_content);
-            edtSearch = (SearchView) rootView.findViewById(R.id.edt_search_text);
             recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
             loadingProgress = (ProgressBar) rootView.findViewById(R.id.loading_progress);
             txtComingSoon = (CustomTextView) rootView.findViewById(R.id.txt_coming_soon);
             txtRetry = (CustomTextView) rootView.findViewById(R.id.txt_reload_data);
 
             mContext = this.getContext();
+            fragment = this;
 
             sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-
-            edtSearch.setOnQueryTextListener(this);
 
             if (sectionNumber == 1) {
                 deliveryAdapter = new DeliveryAdapter(this.getContext(), RDApplication.getDeliveryModels(), new DeliveryAdapter.OnItemClickListener() {
@@ -241,7 +203,7 @@ public class TabActivity extends AppCompatActivity {
             }
             else if (sectionNumber == 2) {
                 txtComingSoon.setVisibility(View.VISIBLE);
-                relActualContent.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
                 txtRetry.setVisibility(View.GONE);
 
                 pickUpAdapter = new PickUpAdapter(this.getContext(), RDApplication.getPickupSetModel().getPickupSetModels(), new PickUpAdapter.OnItemClickListener() {
@@ -272,18 +234,74 @@ public class TabActivity extends AppCompatActivity {
 
         @Subscribe(threadMode = ThreadMode.MAIN)
         public void onDeliveryDataUpdatedEvent(RDApplication.DeliveryDataUpdatedEvent event) {
-            Toast.makeText(getActivity(), "Delivery data updated", Toast.LENGTH_SHORT).show();
             if (sectionNumber == 1) {
-                deliveryAdapter.setDeliveryList(event.deliveryModels);
+                deliveryAdapter.setDeliveryList(filterDeliveries());
             }
         }
 
         @Subscribe(threadMode = ThreadMode.MAIN)
         public void onPickupDataUpdatedEvent(RDApplication.PickupDataUpdatedEvent event) {
-            Toast.makeText(getActivity(), "Pickup data updated", Toast.LENGTH_SHORT).show();
             if (sectionNumber == 2) {
                 pickUpAdapter.setPickUpModelList(event.pickupSetModel.getPickupSetModels());
             }
+        }
+
+        @Override
+        public void onCreateOptionsMenu(final Menu menu, MenuInflater menuInflater) {
+            menuInflater.inflate(R.menu.menu_tab, menu);
+
+            final MenuItem searchItem = menu.findItem(R.id.action_search);
+
+            SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+
+            SearchView searchView = null;
+            if (searchItem != null) {
+                searchView = (SearchView) searchItem.getActionView();
+                searchView.setOnQueryTextListener(this);
+            }
+            if (searchView != null) {
+                searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+            }
+
+            super.onCreateOptionsMenu(menu, menuInflater);
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            // Handle action bar item clicks here. The action bar will
+            // automatically handle clicks on the Home/Up button, so long
+            // as you specify a parent activity in AndroidManifest.xml.
+            int id = item.getItemId();
+
+            //noinspection SimplifiableIfStatement
+            switch (id) {
+                case R.id.action_logout:
+                    ((TabActivity)getActivity()).onLogoutClicked();
+                    return true;
+                case R.id.action_search:
+                    return true;
+                case R.id.action_filter:
+                    onFilterClick();
+                    return true;
+                case R.id.action_switch_to_map:
+                    Intent intent = new Intent(getActivity(), MapsActivity.class);
+                    getActivity().startActivity(intent);
+                    return true;
+            }
+
+            return super.onOptionsItemSelected(item);
+        }
+
+        private void onFilterClick() {
+            String[] type = new String[]{"ALL", "PREPAID", "COD", "REVERSE"};
+            List<String> filterList = new ArrayList<>();
+            filterList.addAll(Arrays.asList(type));
+            ActivityUtils.showFilterDialog(getActivity(), filterList, new OnDialogClickListener() {
+                @Override
+                public void onClick(String filterType) {
+                    updateFilterStatus(filterType);
+                }
+            });
         }
 
         @Override
@@ -297,7 +315,7 @@ public class TabActivity extends AppCompatActivity {
             super.onResume();
             EventBus.getDefault().register(this);
             if (sectionNumber == 1) {
-                deliveryAdapter.setDeliveryList(RDApplication.getDeliveryModels());
+                deliveryAdapter.setDeliveryList(filterDeliveries());
             }
             if (sectionNumber == 2) {
                 pickUpAdapter.setPickUpModelList(RDApplication.getPickupSetModel().getPickupSetModels());
@@ -307,13 +325,13 @@ public class TabActivity extends AppCompatActivity {
         private void showProgress(boolean showProgress) {
             if (showProgress) {
                 loadingProgress.setVisibility(View.VISIBLE);
-                relActualContent.setVisibility(View.INVISIBLE);
+                recyclerView.setVisibility(View.INVISIBLE);
                 txtComingSoon.setVisibility(View.GONE);
                 txtRetry.setVisibility(View.GONE);
             }
             else {
                 loadingProgress.setVisibility(View.GONE);
-                relActualContent.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.VISIBLE);
                 txtComingSoon.setVisibility(View.GONE);
                 txtRetry.setVisibility(View.GONE);
             }
@@ -333,12 +351,9 @@ public class TabActivity extends AppCompatActivity {
                             switch (responseModel.getStatusCode()) {
                                 case "200":
                                     List<DeliveryModel> deliveryModels = new ArrayList<>();
+                                    List<DeliveryModel> nonDispatchedDeliveryModels = new ArrayList<>();
                                     DeliveryModel deliveryModel;
                                     for (DeliveryResponseModel.DeliveryModel deliveryModelFromServer : response.body().getDelivery()) {
-                                        deliveryModel = new DeliveryModel();
-                                        deliveryModel.setHeader(true);
-                                        deliveryModel.setDeliveryNumber(deliveryModelFromServer.getDispatch_number());
-                                        deliveryModels.add(deliveryModel);
                                         for (DeliveryResponseModel.DeliveryModel.ShipmentModel shipmentModel : deliveryModelFromServer.getShipments()) {
                                             deliveryModel = new DeliveryModel();
                                             deliveryModel.setPincode(shipmentModel.getPincode());
@@ -355,9 +370,16 @@ public class TabActivity extends AppCompatActivity {
                                             deliveryModel.setMode(shipmentModel.getMode());
                                             deliveryModel.setHeader(false);
                                             deliveryModel.setDeliveryNumber(deliveryModelFromServer.getDispatch_number());
-                                            deliveryModels.add(deliveryModel);
+                                            if (deliveryModel.getStatus().equalsIgnoreCase("dispatched")) {
+                                                deliveryModels.add(deliveryModel);
+                                            }
+                                            else {
+                                                nonDispatchedDeliveryModels.add(deliveryModel);
+                                            }
                                         }
                                     }
+
+                                    deliveryModels.addAll(nonDispatchedDeliveryModels);
                                     showProgress(false);
                                     RDApplication.setDeliveryModels(deliveryModels);
                                     break;
@@ -391,7 +413,7 @@ public class TabActivity extends AppCompatActivity {
 
         private void showRetryOption() {
             loadingProgress.setVisibility(View.GONE);
-            relActualContent.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
             txtComingSoon.setVisibility(View.GONE);
             txtRetry.setVisibility(View.VISIBLE);
         }
@@ -403,30 +425,40 @@ public class TabActivity extends AppCompatActivity {
 
         @Override
         public boolean onQueryTextChange(String newText) {
-            final List<DeliveryModel> filteredModelList = filter(RDApplication.getDeliveryModels(), newText);
-            deliveryAdapter.setDeliveryList(filteredModelList);
-            recyclerView.scrollToPosition(0);
+            updateSearchText(newText);
             return true;
         }
 
-        private static List<DeliveryModel> filter(List<DeliveryModel> models, String query) {
-            final String lowerCaseQuery = query.toLowerCase();
-            if (TextUtils.isEmpty(lowerCaseQuery)) {
-                return models;
+        private void updateSearchText(String newText) {
+            searchQuery = newText;
+            if (sectionNumber == 1) {
+                deliveryAdapter.setDeliveryList(filterDeliveries());
             }
-            else {
-                final List<DeliveryModel> filteredModelList = new ArrayList<>();
-                for (DeliveryModel model : models) {
-                    if (model.isHeader()) {
-                        continue;
-                    }
-                    final String text = model.getName().toLowerCase();
-                    if (text.contains(lowerCaseQuery)) {
+            recyclerView.scrollToPosition(0);
+        }
+
+        private void updateFilterStatus(String newFilterStatus) {
+            filterType = newFilterStatus;
+            if (sectionNumber == 1) {
+                deliveryAdapter.setDeliveryList(filterDeliveries());
+            }
+            recyclerView.scrollToPosition(0);
+        }
+
+        private List<DeliveryModel> filterDeliveries() {
+            String lowerCaseQuery = searchQuery == null ? "" : searchQuery.toLowerCase();
+            String lowerCaseFilterType = filterType == null ? "" : filterType.toLowerCase();
+            List<DeliveryModel> filteredModelList = new ArrayList<>();
+            List<DeliveryModel> models = RDApplication.getDeliveryModels();
+            for (DeliveryModel model : models) {
+                if (TextUtils.isEmpty(lowerCaseQuery) || model.getName().toLowerCase().contains(lowerCaseQuery)) {
+                    if (TextUtils.isEmpty(lowerCaseFilterType) || lowerCaseFilterType.equalsIgnoreCase("all") || model.getMode().equalsIgnoreCase(lowerCaseFilterType)) {
                         filteredModelList.add(model);
                     }
                 }
-                return filteredModelList;
             }
+            return filteredModelList;
+
         }
     }
 

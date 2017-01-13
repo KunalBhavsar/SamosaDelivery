@@ -14,30 +14,13 @@
         android:layout_marginBottom="8dp"
         android:visibility="gone" />
 
-    <RelativeLayout
-        android:id="@+id/rel_actual_content"
-        android:layout_marginEnd="@dimen/_10dp"
-        android:layout_marginLeft="@dimen/_10dp"
-        android:layout_marginRight="@dimen/_10dp"
-        android:layout_marginStart="@dimen/_10dp"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:padding="@dimen/_5dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.SearchView
-            android:id="@+id/edt_search_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_marginTop="@dimen/_5dp"
-            android:layout_below="@+id/edt_search_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            android:scrollbars="vertical" />
-
-    </RelativeLayout>
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:scrollbars="vertical" />
 
     <co.rapiddelivery.views.CustomTextView
         android:id="@+id/txt_coming_soon"

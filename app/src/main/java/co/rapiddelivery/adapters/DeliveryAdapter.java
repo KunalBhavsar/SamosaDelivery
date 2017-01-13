@@ -21,8 +21,6 @@ import co.rapiddelivery.views.CustomTextView;
  */
 
 public class DeliveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static final int TYPE_HEADER = 0;
-    private static final int TYPE_ITEM = 1;
     private Context mContext;
     private List<DeliveryModel> deliveryList;
     private final OnItemClickListener listener;
@@ -59,17 +57,6 @@ public class DeliveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    private class MyHeaderHolder extends RecyclerView.ViewHolder {
-        TextView textView;
-
-        MyHeaderHolder(View itemView) {
-            super(itemView);
-            itemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey_77));
-            textView = (TextView) itemView.findViewById(android.R.id.text1);
-            textView.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimaryDark));
-        }
-    }
-
     public DeliveryAdapter(Context mContext, List<DeliveryModel> deliveryList, OnItemClickListener listener) {
         this.mContext = mContext;
         this.deliveryList = deliveryList;
@@ -77,57 +64,52 @@ public class DeliveryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     @Override
-    public int getItemViewType(int position) {
-        if (deliveryList.get(position).isHeader()) {
-            return TYPE_HEADER;
-        }
-
-        return TYPE_ITEM;
-    }
-
-    @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == TYPE_ITEM) {
-            //inflate your layout and pass it to view holder
-            return new MyViewHolder(LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_delivery_list, parent, false));
-        } else if (viewType == TYPE_HEADER) {
-            //inflate your layout and pass it to view holder
-            return new MyHeaderHolder(LayoutInflater.from(parent.getContext())
-                    .inflate(android.R.layout.simple_list_item_1, parent, false));
-        }
-        return new MyViewHolder(null);
+        //inflate your layout and pass it to view holder
+        return new MyViewHolder(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_delivery_list, parent, false));
     }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
         DeliveryModel deliveryModel = deliveryList.get(position);
-        if (getItemViewType(position) == TYPE_HEADER) {
-            MyHeaderHolder holder = (MyHeaderHolder) viewHolder;
-            holder.textView.setText("Dispatch Number : " + deliveryModel.getDeliveryNumber());
-        }
-        else if (getItemViewType(position) == TYPE_ITEM) {
-            MyViewHolder holder = (MyViewHolder) viewHolder;
-            holder.txtCustName.setText(deliveryModel.getName());
-            holder.txtDeliveryNumber.setText("(" + deliveryModel.getAwb() + ") - " + deliveryModel.getFlow());
-            holder.txtCustAddress.setText(deliveryModel.getAddress1() + ", " + deliveryModel.getAddress2() + " - " + deliveryModel.getPincode());
-            holder.txtAmount.setText(deliveryModel.getValue());
-            holder.txtMode.setText(deliveryModel.getMode().toUpperCase());
+        MyViewHolder holder = (MyViewHolder) viewHolder;
+        holder.txtCustName.setText(deliveryModel.getName() + " - " + deliveryModel.getFlow());
+        holder.txtDeliveryNumber.setText("(" + deliveryModel.getAwb() + ") \n Status : " + deliveryModel.getStatus());
+        holder.txtCustAddress.setText(deliveryModel.getAddress1() + ", " + deliveryModel.getAddress2() + " - " + deliveryModel.getPincode());
+        holder.txtAmount.setText(deliveryModel.getValue());
+        holder.txtMode.setText(deliveryModel.getMode().toUpperCase());
 
-            if (!deliveryModel.getStatus().equalsIgnoreCase("Dispatched")) {
+        if (deliveryModel.getFlow().toLowerCase().contains("deliver")) {
+            if (!deliveryModel.getStatus().equalsIgnoreCase("dispatched")) {
                 holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.green_status));
-            } else if (deliveryModel.getMode().equalsIgnoreCase("cod")) {
+            }
+            else if (deliveryModel.getMode().equalsIgnoreCase("cod")) {
                 holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.yellow));
-            } else if (deliveryModel.getMode().equalsIgnoreCase("prepaid")) {
+            }
+            else if (deliveryModel.getMode().equalsIgnoreCase("prepaid")) {
                 holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.blue));
-            }else if (deliveryModel.getMode().equalsIgnoreCase("reverse")) {
+            }
+            else if (deliveryModel.getMode().equalsIgnoreCase("reverse")) {
                 holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.red));
-            } else {
+            }
+            else {
                 holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey));
             }
-
-            holder.setClickListener(deliveryModel, listener);
         }
+        else if (deliveryModel.getFlow().toLowerCase().contains("return")) {
+            if (!deliveryModel.getStatus().equalsIgnoreCase("dispatched")) {
+                holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.green_status));
+            }
+            else {
+                holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.blue));
+            }
+        }
+        else {
+            holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey));
+        }
+
+        holder.setClickListener(deliveryModel, listener);
     }
 
     @Override
