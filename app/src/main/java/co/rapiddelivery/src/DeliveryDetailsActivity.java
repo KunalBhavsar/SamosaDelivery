@@ -13,12 +13,21 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import co.rapiddelivery.RDApplication;
 import co.rapiddelivery.models.DeliveryModel;
+import co.rapiddelivery.network.APIClient;
+import co.rapiddelivery.network.LoginResponse;
 import co.rapiddelivery.utils.KeyConstants;
+import co.rapiddelivery.utils.SPrefUtils;
 import co.rapiddelivery.views.CustomButton;
 import co.rapiddelivery.views.CustomTextView;
 import co.rapiddelivery.views.TouchEventView;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DeliveryDetailsActivity extends AppCompatActivity {
 
@@ -94,12 +103,13 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Bitmap bitmap = viewSignPad.getBitmapDrawing();
                 if (bitmap == null) {
-                    Toast.makeText(mAppContext, "Please take singature of customer", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mAppContext, "Please take signature of customer", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 viewSignPad.resetDrawing();
                 relBeforeCallStart.setVisibility(View.VISIBLE);
                 relAfterCallStart.setVisibility(View.GONE);
+                sendDeliveryStatusToServer("1", "");
             }
         });
         btnFailed.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +118,8 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
                 viewSignPad.resetDrawing();
                 relBeforeCallStart.setVisibility(View.VISIBLE);
                 relAfterCallStart.setVisibility(View.GONE);
+                // TODO: 23/1/17 remark popup
+                sendDeliveryStatusToServer("0", "");
             }
         });
         viewSignPad = (TouchEventView) findViewById(R.id.view_sign_pad);
@@ -128,6 +140,24 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
                 imgSign.setImageBitmap(viewSignPad.getBitmapDrawing());
             }
         });
+    }
+
+    private void sendDeliveryStatusToServer(String deliveryStatus, String remark) {
+        String loginDetails = SPrefUtils.getStringPreference(this, SPrefUtils.LOGGEDIN_USER_DETAILS);
+        LoginResponse loginResponse = new Gson().fromJson(loginDetails, LoginResponse.class);
+
+        APIClient.getClient().updateDeliveryTask(loginResponse.getUserName(), loginResponse.getPassword(), loginResponse.getEmp_id(), deliveryStatus, remark)
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
     }
 
 }

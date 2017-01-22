@@ -75,7 +75,10 @@ public class LocationService extends Service implements LocationListener, Google
                     .addApi(LocationServices.API)
                     .build();
         }
-        mGoogleApiClient.connect();
+        if(mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+
     }
 
     protected void createLocationRequest() {
@@ -101,7 +104,7 @@ public class LocationService extends Service implements LocationListener, Google
             return true;
         } else {
             /*googleApiAvailability.getErrorDialog(thus, status, 0).show();*/
-            Toast.makeText(this, status, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Google play service is not found", Toast.LENGTH_SHORT).show();
             return false;
         }
     }

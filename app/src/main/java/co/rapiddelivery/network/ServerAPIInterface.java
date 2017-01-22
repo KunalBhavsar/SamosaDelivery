@@ -23,5 +23,10 @@ public interface ServerAPIInterface {
     @FormUrlEncoded
     @POST("app/ops/drs.php")
     Call<DeliveryResponseModel> getDeliveryList(@Field("username") String username, @Field("password") String password, @Field("emp_id") String empId);
+
+    @FormUrlEncoded
+    @POST("app/ops/update.php")
+    Call<ResponseBody> updateDeliveryTask(@Field("username") String username, @Field("password") String password, @Field("emp_id") String empId,
+                                                   @Field("delivered") String deliveryStatus, @Field("remarks") String remarks);
 }
 
