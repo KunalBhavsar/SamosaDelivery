@@ -1,10 +1,8 @@
 package co.rapiddelivery;
 
 import android.app.Application;
-import android.text.TextUtils;
 
 import com.activeandroid.ActiveAndroid;
-import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -13,9 +11,7 @@ import java.util.List;
 
 import co.rapiddelivery.models.DeliveryModel;
 import co.rapiddelivery.models.PickUpModel;
-import co.rapiddelivery.models.PickupSetModel;
 import co.rapiddelivery.network.LoginResponse;
-import co.rapiddelivery.utils.SPrefUtils;
 
 /**
  * Created by Kunal on 15/12/16.
@@ -23,8 +19,10 @@ import co.rapiddelivery.utils.SPrefUtils;
 
 public class RDApplication extends Application {
 
+    private static final String TAG = RDApplication.class.getSimpleName();
+
     private static List<DeliveryModel> deliveryModels;
-    private static PickupSetModel pickupSetModel;
+    private static List<PickUpModel> pickupModels;
     private static LoginResponse appOwnerData;
 
     @Override
@@ -39,22 +37,22 @@ public class RDApplication extends Application {
 
     private void initializeDummyData() {
         deliveryModels = new ArrayList<>();
-        pickupSetModel = new PickupSetModel();
+        pickupModels = new ArrayList<>();
     }
 
-    public static PickupSetModel getPickupSetModel() {
-        if (pickupSetModel == null) {
-            pickupSetModel = new PickupSetModel();
+    public static List<PickUpModel> getPickupModels() {
+        if (pickupModels == null) {
+            pickupModels = new ArrayList<>();
         }
-        return pickupSetModel;
+        return pickupModels;
     }
 
-    public static void setPickupSetModel(PickupSetModel pickupSetModel) {
-        if (pickupSetModel == null) {
-            pickupSetModel = new PickupSetModel();
+    public static void setPickupModels(List<PickUpModel> pickupModels) {
+        if (pickupModels == null) {
+            pickupModels = new ArrayList<>();
         }
-        EventBus.getDefault().post(new PickupDataUpdatedEvent(pickupSetModel));
-        RDApplication.pickupSetModel = pickupSetModel;
+        RDApplication.pickupModels = pickupModels;
+        EventBus.getDefault().post(new PickupDataUpdatedEvent(pickupModels));
     }
 
     public static List<DeliveryModel> getDeliveryModels() {
@@ -68,8 +66,8 @@ public class RDApplication extends Application {
         if (deliveryModels == null) {
             deliveryModels = new ArrayList<>();
         }
-        RDApplication.deliveryModels = deliveryModels;
         EventBus.getDefault().post(new DeliveryDataUpdatedEvent(deliveryModels));
+        RDApplication.deliveryModels = deliveryModels;
     }
 
     public static LoginResponse getAppOwnerData() {
@@ -96,10 +94,9 @@ public class RDApplication extends Application {
     }
 
     public static PickUpModel getPickUpModelByPickupNumber(String pickupNumber) {
-        if (pickupSetModel == null) {
+        if (pickupModels == null) {
             return null;
         }
-        List<PickUpModel> pickupModels = pickupSetModel.getPickupSetModels();
         for (PickUpModel pickupModel : pickupModels) {
             if (pickupModel.getPickupNumber().equals(pickupNumber)) {
                 return pickupModel;
@@ -119,11 +116,11 @@ public class RDApplication extends Application {
 
     public static class PickupDataUpdatedEvent {
 
-        public PickupDataUpdatedEvent(PickupSetModel pickupSetModel) {
-            this.pickupSetModel = pickupSetModel;
+        public PickupDataUpdatedEvent(List<PickUpModel> pickupModels) {
+            this.pickupModels = pickupModels;
         }
 
-        public final PickupSetModel pickupSetModel;
+        public final List<PickUpModel> pickupModels;
     }
 
     public static class AppOwnerDataUpdatedEvent {

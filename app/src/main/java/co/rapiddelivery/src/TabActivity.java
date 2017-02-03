@@ -4,34 +4,28 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -39,8 +33,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import co.rapiddelivery.RDApplication;
@@ -52,11 +44,11 @@ import co.rapiddelivery.models.PickUpModel;
 import co.rapiddelivery.network.APIClient;
 import co.rapiddelivery.network.DeliveryResponseModel;
 import co.rapiddelivery.network.LoginResponse;
-import co.rapiddelivery.utils.ActivityUtils;
+import co.rapiddelivery.network.PickupResponseModel;
 import co.rapiddelivery.receiver.AlarmReceiver;
+import co.rapiddelivery.utils.ActivityUtils;
 import co.rapiddelivery.utils.KeyConstants;
 import co.rapiddelivery.utils.SPrefUtils;
-import co.rapiddelivery.views.CustomEditText;
 import co.rapiddelivery.views.CustomTextView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -114,7 +106,7 @@ public class TabActivity extends AppCompatActivity {
         SPrefUtils.setStringPreference(mAppContext, SPrefUtils.LOGGEDIN_USER_DETAILS, null);
         RDApplication.setAppOwnerData(null);
         RDApplication.setDeliveryModels(null);
-        RDApplication.setPickupSetModel(null);
+        RDApplication.setPickupModels(null);
         Intent intent = new Intent(mActivityContext, LoginActivity.class);
         mActivityContext.startActivity(intent);
         AlarmReceiver alarmReceiver = new AlarmReceiver();
@@ -202,11 +194,7 @@ public class TabActivity extends AppCompatActivity {
                 });
             }
             else if (sectionNumber == 2) {
-                txtComingSoon.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
-                txtRetry.setVisibility(View.GONE);
-
-                pickUpAdapter = new PickUpAdapter(this.getContext(), RDApplication.getPickupSetModel().getPickupSetModels(), new PickUpAdapter.OnItemClickListener() {
+                pickUpAdapter = new PickUpAdapter(this.getContext(), RDApplication.getPickupModels(), new PickUpAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(PickUpModel pickUpModel) {
                         Intent intent = new Intent(getActivity(), PickUpDetailsActivity.class);
@@ -219,6 +207,13 @@ public class TabActivity extends AppCompatActivity {
                 recyclerView.setLayoutManager(mLayoutManager);
                 recyclerView.setItemAnimator(new DefaultItemAnimator());
                 recyclerView.setAdapter(pickUpAdapter);
+
+                txtRetry.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        getPickUpListFromServer();
+                    }
+                });
             }
 
             return rootView;
@@ -229,6 +224,9 @@ public class TabActivity extends AppCompatActivity {
             super.onViewCreated(view, savedInstanceState);
             if (sectionNumber == 1) {
                 getDRListFromServer();
+            }
+            else if (sectionNumber == 2) {
+                getPickUpListFromServer();
             }
         }
 
@@ -242,7 +240,7 @@ public class TabActivity extends AppCompatActivity {
         @Subscribe(threadMode = ThreadMode.MAIN)
         public void onPickupDataUpdatedEvent(RDApplication.PickupDataUpdatedEvent event) {
             if (sectionNumber == 2) {
-                pickUpAdapter.setPickUpModelList(event.pickupSetModel.getPickupSetModels());
+                pickUpAdapter.setPickUpModelList(filterPickups());
             }
         }
 
@@ -318,7 +316,7 @@ public class TabActivity extends AppCompatActivity {
                 deliveryAdapter.setDeliveryList(filterDeliveries());
             }
             if (sectionNumber == 2) {
-                pickUpAdapter.setPickUpModelList(RDApplication.getPickupSetModel().getPickupSetModels());
+                pickUpAdapter.setPickUpModelList(filterPickups());
             }
         }
 
@@ -343,67 +341,137 @@ public class TabActivity extends AppCompatActivity {
                 LoginResponse loginResponse = RDApplication.getAppOwnerData();
 
                 APIClient.getClient().getDeliveryList(loginResponse.getUserName(), loginResponse.getPassword(), loginResponse.getEmp_id())
-                .enqueue(new Callback<DeliveryResponseModel>() {
-                    @Override
-                    public void onResponse(Call<DeliveryResponseModel> call, Response<DeliveryResponseModel> response) {
-                        DeliveryResponseModel responseModel = response.body();
-                        if(null != responseModel) {
-                            switch (responseModel.getStatusCode()) {
-                                case "200":
-                                    List<DeliveryModel> deliveryModels = new ArrayList<>();
-                                    List<DeliveryModel> nonDispatchedDeliveryModels = new ArrayList<>();
-                                    DeliveryModel deliveryModel;
-                                    for (DeliveryResponseModel.DeliveryModel deliveryModelFromServer : response.body().getDelivery()) {
-                                        for (DeliveryResponseModel.DeliveryModel.ShipmentModel shipmentModel : deliveryModelFromServer.getShipments()) {
-                                            deliveryModel = new DeliveryModel();
-                                            deliveryModel.setPincode(shipmentModel.getPincode());
-                                            deliveryModel.setName(shipmentModel.getName());
-                                            deliveryModel.setAddress1(shipmentModel.getAddress_1());
-                                            deliveryModel.setAddress2(shipmentModel.getAddress_2());
-                                            deliveryModel.setAwb(shipmentModel.getAwb());
-                                            deliveryModel.setDispatchCount(shipmentModel.getDispatch_count());
-                                            deliveryModel.setFlow(shipmentModel.getFlow());
-                                            deliveryModel.setLat(shipmentModel.getLat());
-                                            deliveryModel.setLng(shipmentModel.getLng());
-                                            deliveryModel.setStatus(shipmentModel.getStatus());
-                                            deliveryModel.setValue(shipmentModel.getValue());
-                                            deliveryModel.setMode(shipmentModel.getMode());
-                                            deliveryModel.setHeader(false);
-                                            deliveryModel.setDeliveryNumber(deliveryModelFromServer.getDispatch_number());
-                                            if (deliveryModel.getStatus().equalsIgnoreCase("dispatched")) {
-                                                deliveryModels.add(deliveryModel);
+                        .enqueue(new Callback<DeliveryResponseModel>() {
+                            @Override
+                            public void onResponse(Call<DeliveryResponseModel> call, Response<DeliveryResponseModel> response) {
+                                DeliveryResponseModel responseModel = response.body();
+                                if(null != responseModel) {
+                                    switch (responseModel.getStatusCode()) {
+                                        case "200":
+                                            List<DeliveryModel> deliveryModels = new ArrayList<>();
+                                            List<DeliveryModel> nonDispatchedDeliveryModels = new ArrayList<>();
+                                            DeliveryModel deliveryModel;
+                                            for (DeliveryResponseModel.DeliveryModel deliveryModelFromServer : response.body().getDelivery()) {
+                                                for (DeliveryResponseModel.DeliveryModel.ShipmentModel shipmentModel : deliveryModelFromServer.getShipments()) {
+                                                    deliveryModel = new DeliveryModel();
+                                                    deliveryModel.setPincode(shipmentModel.getPincode());
+                                                    deliveryModel.setName(shipmentModel.getName());
+                                                    deliveryModel.setAddress1(shipmentModel.getAddress_1());
+                                                    deliveryModel.setAddress2(shipmentModel.getAddress_2());
+                                                    deliveryModel.setAwb(shipmentModel.getAwb());
+                                                    deliveryModel.setDispatchCount(shipmentModel.getDispatch_count());
+                                                    deliveryModel.setFlow(shipmentModel.getFlow());
+                                                    deliveryModel.setLat(shipmentModel.getLat());
+                                                    deliveryModel.setLng(shipmentModel.getLng());
+                                                    deliveryModel.setStatus(shipmentModel.getStatus());
+                                                    deliveryModel.setValue(shipmentModel.getValue());
+                                                    deliveryModel.setMode(shipmentModel.getMode());
+                                                    deliveryModel.setHeader(false);
+                                                    deliveryModel.setDeliveryNumber(deliveryModelFromServer.getDispatch_number());
+                                                    if (deliveryModel.getStatus().equalsIgnoreCase("dispatched")) {
+                                                        deliveryModels.add(deliveryModel);
+                                                    }
+                                                    else {
+                                                        nonDispatchedDeliveryModels.add(deliveryModel);
+                                                    }
+                                                }
                                             }
-                                            else {
-                                                nonDispatchedDeliveryModels.add(deliveryModel);
-                                            }
-                                        }
+
+                                            deliveryModels.addAll(nonDispatchedDeliveryModels);
+                                            showProgress(false);
+                                            RDApplication.setDeliveryModels(deliveryModels);
+                                            break;
+                                        default:
+                                            showProgress(false);
+                                            Toast.makeText(mContext, responseModel.getMessage(), Toast.LENGTH_SHORT).show();
+                                            showRetryOption();
+                                            break;
                                     }
-
-                                    deliveryModels.addAll(nonDispatchedDeliveryModels);
+                                } else {
                                     showProgress(false);
-                                    RDApplication.setDeliveryModels(deliveryModels);
-                                    break;
-                                default:
-                                    showProgress(false);
-                                    Toast.makeText(mContext, responseModel.getMessage(), Toast.LENGTH_SHORT).show();
                                     showRetryOption();
-                                    break;
+                                    Toast.makeText(mContext, "Error in loading Delivery list", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        } else {
-                            showProgress(false);
-                            showRetryOption();
-                            Toast.makeText(mContext, "Error in loading Delivery list", Toast.LENGTH_SHORT).show();
-                        }
-                    }
 
-                    @Override
-                    public void onFailure(Call<DeliveryResponseModel> call, Throwable t) {
-                        t.printStackTrace();
-                        showProgress(false);
-                        Toast.makeText(mContext, "Error in loading Delivery list", Toast.LENGTH_SHORT).show();
-                        showRetryOption();
-                    }
-                });
+                            @Override
+                            public void onFailure(Call<DeliveryResponseModel> call, Throwable t) {
+                                t.printStackTrace();
+                                showProgress(false);
+                                Toast.makeText(mContext, "Error in loading Delivery list", Toast.LENGTH_SHORT).show();
+                                showRetryOption();
+                            }
+                        });
+            }
+            else {
+                Toast.makeText(mContext, "Check your internet connection", Toast.LENGTH_SHORT).show();
+                showRetryOption();
+            }
+        }
+
+        public void getPickUpListFromServer() {
+            if (ActivityUtils.isNetworkConnected(this.getContext())) {
+                showProgress(true);
+                LoginResponse loginResponse = RDApplication.getAppOwnerData();
+
+                APIClient.getClient().getPickupList(loginResponse.getUserName(), loginResponse.getPassword(), loginResponse.getEmp_id())
+                        .enqueue(new Callback<PickupResponseModel>() {
+                            @Override
+                            public void onResponse(Call<PickupResponseModel> call, Response<PickupResponseModel> response) {
+                                PickupResponseModel responseModel = response.body();
+                                if(null != responseModel) {
+                                    switch (responseModel.getStatusCode()) {
+                                        case "200":
+                                            List<PickUpModel> pickUpModels = new ArrayList<>();
+                                            List<PickUpModel> nonDispatchedPickUpModels = new ArrayList<>();
+                                            PickUpModel pickUpModel;
+                                            for (PickupResponseModel.PickupModel pickUpModelFromServer : response.body().getPickups()) {
+                                                for (PickupResponseModel.PickupModel.RequestModel requestModel : pickUpModelFromServer.getRequests()) {
+                                                    pickUpModel = new PickUpModel();
+                                                    pickUpModel.setPincode(requestModel.getPincode());
+                                                    pickUpModel.setName(requestModel.getName());
+                                                    pickUpModel.setPhoneNumber(requestModel.getPhone());
+                                                    pickUpModel.setAddress(requestModel.getAddress());
+                                                    pickUpModel.setPickupNumber(requestModel.getPick_no());
+                                                    pickUpModel.setExpectedCount(requestModel.getExpected_count());
+                                                    pickUpModel.setLatitude(requestModel.getLat());
+                                                    pickUpModel.setLongitude(requestModel.getLng());
+                                                    pickUpModel.setStatus(requestModel.getStatus());
+                                                    pickUpModel.setMode(requestModel.getMode());
+                                                    if (pickUpModel.getStatus().equalsIgnoreCase("dispatched")) {
+                                                        pickUpModels.add(pickUpModel);
+                                                    }
+                                                    else {
+                                                        nonDispatchedPickUpModels.add(pickUpModel);
+                                                    }
+                                                }
+                                            }
+
+                                            pickUpModels.addAll(nonDispatchedPickUpModels);
+                                            showProgress(false);
+                                            RDApplication.setPickupModels(pickUpModels);
+                                            break;
+                                        default:
+                                            showProgress(false);
+                                            Toast.makeText(mContext, responseModel.getMessage(), Toast.LENGTH_SHORT).show();
+                                            showRetryOption();
+                                            break;
+                                    }
+                                } else {
+                                    showProgress(false);
+                                    showRetryOption();
+                                    Toast.makeText(mContext, "Error in loading Pickup list", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<PickupResponseModel> call, Throwable t) {
+                                t.printStackTrace();
+                                showProgress(false);
+                                Toast.makeText(mContext, "Error in loading Pickup list", Toast.LENGTH_SHORT).show();
+                                showRetryOption();
+                            }
+                        });
             }
             else {
                 Toast.makeText(mContext, "Check your internet connection", Toast.LENGTH_SHORT).show();
@@ -434,6 +502,9 @@ public class TabActivity extends AppCompatActivity {
             if (sectionNumber == 1) {
                 deliveryAdapter.setDeliveryList(filterDeliveries());
             }
+            else if (sectionNumber == 2) {
+                pickUpAdapter.setPickUpModelList(filterPickups());
+            }
             recyclerView.scrollToPosition(0);
         }
 
@@ -441,6 +512,9 @@ public class TabActivity extends AppCompatActivity {
             filterType = newFilterStatus;
             if (sectionNumber == 1) {
                 deliveryAdapter.setDeliveryList(filterDeliveries());
+            }
+            else if (sectionNumber == 2) {
+                pickUpAdapter.setPickUpModelList(filterPickups());
             }
             recyclerView.scrollToPosition(0);
         }
@@ -451,6 +525,22 @@ public class TabActivity extends AppCompatActivity {
             List<DeliveryModel> filteredModelList = new ArrayList<>();
             List<DeliveryModel> models = RDApplication.getDeliveryModels();
             for (DeliveryModel model : models) {
+                if (TextUtils.isEmpty(lowerCaseQuery) || model.getName().toLowerCase().contains(lowerCaseQuery)) {
+                    if (TextUtils.isEmpty(lowerCaseFilterType) || lowerCaseFilterType.equalsIgnoreCase("all") || model.getMode().equalsIgnoreCase(lowerCaseFilterType)) {
+                        filteredModelList.add(model);
+                    }
+                }
+            }
+            return filteredModelList;
+
+        }
+
+        private List<PickUpModel> filterPickups() {
+            String lowerCaseQuery = searchQuery == null ? "" : searchQuery.toLowerCase();
+            String lowerCaseFilterType = filterType == null ? "" : filterType.toLowerCase();
+            List<PickUpModel> filteredModelList = new ArrayList<>();
+            List<PickUpModel> models = RDApplication.getPickupModels();
+            for (PickUpModel model : models) {
                 if (TextUtils.isEmpty(lowerCaseQuery) || model.getName().toLowerCase().contains(lowerCaseQuery)) {
                     if (TextUtils.isEmpty(lowerCaseFilterType) || lowerCaseFilterType.equalsIgnoreCase("all") || model.getMode().equalsIgnoreCase(lowerCaseFilterType)) {
                         filteredModelList.add(model);

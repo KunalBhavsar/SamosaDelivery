@@ -25,8 +25,16 @@ public interface ServerAPIInterface {
     Call<DeliveryResponseModel> getDeliveryList(@Field("username") String username, @Field("password") String password, @Field("emp_id") String empId);
 
     @FormUrlEncoded
+    @POST("app/ops/start.php")
+    Call<ResponseBody> startDeliveryTask(@Field("username") String username, @Field("password") String password, @Field("emp_id") String empId,
+                                         @Field("waybill") String waybill);
+    @FormUrlEncoded
     @POST("app/ops/update.php")
     Call<ResponseBody> updateDeliveryTask(@Field("username") String username, @Field("password") String password, @Field("emp_id") String empId,
-                                                   @Field("delivered") String deliveryStatus, @Field("remarks") String remarks);
+                                          @Field("waybill") String waybill, @Field("delivered") String deliveryStatus, @Field("remarks") String remarks);
+
+    @FormUrlEncoded
+    @POST("app/ops/pickup.php")
+    Call<PickupResponseModel> getPickupList(@Field("username") String username, @Field("password") String password, @Field("emp_id") String empId);
 }
 

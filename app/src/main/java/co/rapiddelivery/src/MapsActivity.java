@@ -307,7 +307,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             List<DeliveryModel> deliveryModels = RDApplication.getDeliveryModels();
 
             for (DeliveryModel deliveryModel : deliveryModels) {
-                Log.i(TAG, deliveryModel.getName() + " Latitude : " + deliveryModel.getLat() + " and Longitude : " +  deliveryModel.getLng());
                 LatLng latLng = new LatLng(deliveryModel.getLat(), deliveryModel.getLng());
                 builder.include(latLng);
                 mMap.addMarker(new MarkerOptions()
@@ -318,7 +317,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .setTag(deliveryModel);
             }
 
-            List<PickUpModel> pickUpModels = RDApplication.getPickupSetModel().getPickupSetModels();
+            List<PickUpModel> pickUpModels = RDApplication.getPickupModels();
 
             for (PickUpModel pickUpModel : pickUpModels) {
                 LatLng latLng = new LatLng(pickUpModel.getLatitude(), pickUpModel.getLongitude());

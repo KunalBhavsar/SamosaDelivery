@@ -7,16 +7,15 @@ package co.rapiddelivery.models;
 public class PickUpModel {
 
     private String pickupNumber;
-    private String name;
+    private String status;
+    private String address;
     private String pincode;
     private String phoneNumber;
-    private String address;
-    private int numberOfShipments;
-    private int expectedWeight;
-    private int cutOffTime;
+    private String mode;
     private double latitude;
     private double longitude;
-    private int status;
+    private int expectedCount;
+    private String name;
 
     public String getPickupNumber() {
         return pickupNumber;
@@ -26,12 +25,20 @@ public class PickUpModel {
         this.pickupNumber = pickupNumber;
     }
 
-    public String getName() {
-        return name;
+    public String getStatus() {
+        return status;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getPincode() {
@@ -50,44 +57,12 @@ public class PickUpModel {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getAddress() {
-        return address;
+    public String getMode() {
+        return mode;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public int getNumberOfShipments() {
-        return numberOfShipments;
-    }
-
-    public void setNumberOfShipments(int numberOfShipments) {
-        this.numberOfShipments = numberOfShipments;
-    }
-
-    public int getExpectedWeight() {
-        return expectedWeight;
-    }
-
-    public void setExpectedWeight(int expectedWeight) {
-        this.expectedWeight = expectedWeight;
-    }
-
-    public int getCutOffTime() {
-        return cutOffTime;
-    }
-
-    public void setCutOffTime(int cutOffTime) {
-        this.cutOffTime = cutOffTime;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
     public double getLatitude() {
@@ -104,5 +79,21 @@ public class PickUpModel {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public int getExpectedCount() {
+        return expectedCount;
+    }
+
+    public void setExpectedCount(int expectedCount) {
+        this.expectedCount = expectedCount;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

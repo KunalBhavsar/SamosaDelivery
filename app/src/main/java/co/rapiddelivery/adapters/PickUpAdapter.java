@@ -1,7 +1,9 @@
 package co.rapiddelivery.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,9 @@ import co.rapiddelivery.views.CustomTextView;
  */
 
 public class PickUpAdapter extends RecyclerView.Adapter<PickUpAdapter.MyViewHolder> {
+
+    private static final String TAG = PickUpAdapter.class.getSimpleName();
+
     private Context mContext;
     private List<PickUpModel> pickUpModelList;
     private final PickUpAdapter.OnItemClickListener listener;
@@ -28,18 +33,21 @@ public class PickUpAdapter extends RecyclerView.Adapter<PickUpAdapter.MyViewHold
             pickUpModelList = new ArrayList<>();
         }
         this.pickUpModelList = pickUpModelList;
+        Log.i(TAG, "PICKUP LIST SIZE : " + this.pickUpModelList.size());
         notifyDataSetChanged();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public CustomTextView txtCustName, txtCustAddress, txtAmount;
+        public CustomTextView txtCustName, txtPickupNumber, txtCustAddress, txtExpectedCount, txtMode;
         public LinearLayout relWholeContent;
 
         public MyViewHolder(View view) {
             super(view);
             txtCustName = (CustomTextView) view.findViewById(R.id.txt_customer_name);
             txtCustAddress = (CustomTextView) view.findViewById(R.id.txt_customer_address);
-            txtAmount = (CustomTextView) view.findViewById(R.id.txt_amount);
+            txtExpectedCount = (CustomTextView) view.findViewById(R.id.txt_expected_count);
+            txtPickupNumber = (CustomTextView) view.findViewById(R.id.txt_pickup_number);
+            txtMode = (CustomTextView) view.findViewById(R.id.txt_mode);
             relWholeContent = (LinearLayout) view.findViewById(R.id.rel_whole_content);
         }
 
@@ -62,7 +70,7 @@ public class PickUpAdapter extends RecyclerView.Adapter<PickUpAdapter.MyViewHold
     @Override
     public PickUpAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_delivery_list, parent, false);
+                .inflate(R.layout.item_pickup_list, parent, false);
 
         return new PickUpAdapter.MyViewHolder(itemView);
     }
@@ -70,17 +78,27 @@ public class PickUpAdapter extends RecyclerView.Adapter<PickUpAdapter.MyViewHold
     @Override
     public void onBindViewHolder(final PickUpAdapter.MyViewHolder holder, int position) {
         PickUpModel pickUpModel = pickUpModelList.get(position);
-        holder.txtCustName.setText(pickUpModel.getName());
+        holder.txtCustName.setText(pickUpModel.getName() + " ( " + pickUpModel.getPhoneNumber() +" )");
+        holder.txtPickupNumber.setText(pickUpModel.getPickupNumber());
         holder.txtCustAddress.setText(pickUpModel.getAddress() + " " + pickUpModel.getPincode());
-        holder.txtAmount.setText(pickUpModel.getCutOffTime() + " hrs");
-        if (position % 2 == 0) {
-            holder.relWholeContent.setBackgroundColor(mContext.getResources().getColor(R.color.yellow));
+        holder.txtExpectedCount.setText("Count : " + pickUpModel.getExpectedCount());
+        holder.txtMode.setText(pickUpModel.getMode() + "");
+        if (!pickUpModel.getStatus().equalsIgnoreCase("dispatched")) {
+            holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.green_status));
         }
-        if (position % 2 == 1) {
-            holder.relWholeContent.setBackgroundColor(mContext.getResources().getColor(R.color.red));
+        else if (pickUpModel.getMode() != null) {
+            if (pickUpModel.getMode().equalsIgnoreCase("cod")) {
+                holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.yellow));
+            }
+            else if (pickUpModel.getMode().equalsIgnoreCase("prepaid")) {
+                holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.blue));
+            }
+            else if (pickUpModel.getMode().equalsIgnoreCase("reverse")) {
+                holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.red));
+            }
         }
-        if (position == 0) {
-            holder.relWholeContent.setBackgroundColor(mContext.getResources().getColor(R.color.green));
+        else {
+            holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey));
         }
         holder.setClickListener(pickUpModel, listener);
     }
