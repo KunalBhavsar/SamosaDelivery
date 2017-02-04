@@ -83,19 +83,17 @@ public class PickUpAdapter extends RecyclerView.Adapter<PickUpAdapter.MyViewHold
         holder.txtCustAddress.setText(pickUpModel.getAddress() + " " + pickUpModel.getPincode());
         holder.txtExpectedCount.setText("Count : " + pickUpModel.getExpectedCount());
         holder.txtMode.setText(pickUpModel.getMode() + "");
-        if (!pickUpModel.getStatus().equalsIgnoreCase("dispatched")) {
-            holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.green_status));
+        if (!pickUpModel.getStatus().equalsIgnoreCase("manifested")) {
+            holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.light_blue));
         }
-        else if (pickUpModel.getMode() != null) {
-            if (pickUpModel.getMode().equalsIgnoreCase("cod")) {
-                holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.yellow));
-            }
-            else if (pickUpModel.getMode().equalsIgnoreCase("prepaid")) {
-                holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.blue));
-            }
-            else if (pickUpModel.getMode().equalsIgnoreCase("reverse")) {
-                holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.red));
-            }
+        else if (!pickUpModel.getStatus().equalsIgnoreCase("dispatched")) {
+            holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.blue));
+        }
+        else if (!pickUpModel.getStatus().equalsIgnoreCase("picked")) {
+            holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.green));
+        }
+        else if (!pickUpModel.getStatus().equalsIgnoreCase("no pickup")) {
+            holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.red));
         }
         else {
             holder.relWholeContent.setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey));

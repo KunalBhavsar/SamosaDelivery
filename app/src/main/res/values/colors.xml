@@ -22,6 +22,7 @@
 
     <color name="blue_login_btn">#5856d6</color>
     <color name="blue">#1329d6</color>
+    <color name="light_blue">#5464BD</color>
     <color name="black_text">#19191a</color>
     <color name="white">#ffffff</color>
     <color name="orange_login_btn">#ff9500</color>

@@ -75,14 +75,12 @@ public class TabActivity extends AppCompatActivity {
 
     private Activity mActivityContext;
     private Context mAppContext;
-    private LoadingDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
 
-        loadingDialog = LoadingDialog.getInstance();
         mActivityContext = this;
         mAppContext = getApplicationContext();
 
@@ -422,8 +420,9 @@ public class TabActivity extends AppCompatActivity {
                                 if(null != responseModel) {
                                     switch (responseModel.getStatusCode()) {
                                         case "200":
-                                            List<PickUpModel> pickUpModels = new ArrayList<>();
-                                            List<PickUpModel> nonDispatchedPickUpModels = new ArrayList<>();
+                                            List<PickUpModel> manifestedPickUpModels = new ArrayList<>();
+                                            List<PickUpModel> dispatchedPickUpModels = new ArrayList<>();
+                                            List<PickUpModel> otherPickUpModels = new ArrayList<>();
                                             PickUpModel pickUpModel;
                                             for (PickupResponseModel.PickupModel pickUpModelFromServer : response.body().getPickups()) {
                                                 for (PickupResponseModel.PickupModel.RequestModel requestModel : pickUpModelFromServer.getRequests()) {
@@ -438,18 +437,22 @@ public class TabActivity extends AppCompatActivity {
                                                     pickUpModel.setLongitude(requestModel.getLng());
                                                     pickUpModel.setStatus(requestModel.getStatus());
                                                     pickUpModel.setMode(requestModel.getMode());
-                                                    if (pickUpModel.getStatus().equalsIgnoreCase("dispatched")) {
-                                                        pickUpModels.add(pickUpModel);
+                                                    if (pickUpModel.getStatus().equalsIgnoreCase("manifested")) {
+                                                        manifestedPickUpModels.add(pickUpModel);
+                                                    }
+                                                    else if (pickUpModel.getStatus().equalsIgnoreCase("dispatched")) {
+                                                        dispatchedPickUpModels.add(pickUpModel);
                                                     }
                                                     else {
-                                                        nonDispatchedPickUpModels.add(pickUpModel);
+                                                        otherPickUpModels.add(pickUpModel);
                                                     }
                                                 }
                                             }
 
-                                            pickUpModels.addAll(nonDispatchedPickUpModels);
+                                            manifestedPickUpModels.addAll(dispatchedPickUpModels);
+                                            manifestedPickUpModels.addAll(otherPickUpModels);
                                             showProgress(false);
-                                            RDApplication.setPickupModels(pickUpModels);
+                                            RDApplication.setPickupModels(manifestedPickUpModels);
                                             break;
                                         default:
                                             showProgress(false);
