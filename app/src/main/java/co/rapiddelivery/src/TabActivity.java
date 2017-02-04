@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -102,6 +103,7 @@ public class TabActivity extends AppCompatActivity {
     private void onLogoutClicked() {
         SPrefUtils.setIntegerPreference(mAppContext, SPrefUtils.LOGIN_STATUS, KeyConstants.LOGIN_STATUS_BLANK);
         SPrefUtils.setStringPreference(mAppContext, SPrefUtils.LOGGEDIN_USER_DETAILS, null);
+        SPrefUtils.setStringPreference(mAppContext, SPrefUtils.STARTED_DELIVERY_NUMBER, null);
         RDApplication.setAppOwnerData(null);
         RDApplication.setDeliveryModels(null);
         RDApplication.setPickupModels(null);
@@ -344,6 +346,7 @@ public class TabActivity extends AppCompatActivity {
                             public void onResponse(Call<DeliveryResponseModel> call, Response<DeliveryResponseModel> response) {
                                 DeliveryResponseModel responseModel = response.body();
                                 if(null != responseModel) {
+                                    showProgress(false);
                                     switch (responseModel.getStatusCode()) {
                                         case "200":
                                             List<DeliveryModel> deliveryModels = new ArrayList<>();

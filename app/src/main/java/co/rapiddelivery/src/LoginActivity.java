@@ -91,8 +91,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        mEdtUsername.setText("tahir.shaikh");
-        mEdtPassword.setText("rapid123");
+        /*mEdtUsername.setText("tahir.shaikh");
+        mEdtPassword.setText("rapid123");*/
 
         Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
         mSignInButton.setOnClickListener(new OnClickListener() {

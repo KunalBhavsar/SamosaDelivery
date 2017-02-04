@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +26,8 @@ import co.rapiddelivery.RDApplication;
 import co.rapiddelivery.models.DeliveryModel;
 import co.rapiddelivery.network.APIClient;
 import co.rapiddelivery.network.LoginResponse;
+import co.rapiddelivery.receiver.AlarmReceiver;
+import co.rapiddelivery.utils.ActivityUtils;
 import co.rapiddelivery.utils.KeyConstants;
 import co.rapiddelivery.utils.SPrefUtils;
 import co.rapiddelivery.views.CustomButton;
@@ -113,12 +117,8 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         btnStartDelivery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String strtedDeliveryNo = SPrefUtils.getStringPreference(mAppContext, SPrefUtils.STARTED_DELIVERY_NUMBER);
-                if(null != strtedDeliveryNo && !strtedDeliveryNo.equals(awb)) {
-                    Toast.makeText(mAppContext, "Please mark current started delivery " + deliveryNumber + " as delivered or not ", Toast.LENGTH_LONG).show();
-                }  else {
-                    startDeliveryOnServer(deliveryModel.getAwb());
-                }
+                checkGpsStatus();
+
             }
         });
         btnDelivered.setOnClickListener(new View.OnClickListener() {
@@ -239,5 +239,27 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
             progressDialog.dismiss();
         }
         super.onStop();
+    }
+
+    private void checkGpsStatus() {
+        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if(!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            ActivityUtils.showAlertDialog(this, "Please turn on GPS to provide locations");
+        } else {
+            AlarmReceiver alarmReceiver = new AlarmReceiver();
+            alarmReceiver.cancelAlarm(getApplicationContext());
+            alarmReceiver.setDailyUpdateAlarm(getApplicationContext());
+            String strtedDeliveryNo = SPrefUtils.getStringPreference(mAppContext, SPrefUtils.STARTED_DELIVERY_NUMBER);
+            if(null != strtedDeliveryNo && !strtedDeliveryNo.equals(awb)) {
+                Toast.makeText(mAppContext, "Please mark current started delivery " + strtedDeliveryNo + " as delivered or not ", Toast.LENGTH_LONG).show();
+            }  else {
+                startDeliveryOnServer(deliveryModel.getAwb());
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        checkGpsStatus();
     }
 }
