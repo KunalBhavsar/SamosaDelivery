@@ -48,6 +48,7 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
     private LinearLayout lnrSignRelateButtons;
     private ImageView imgSign;
     String deliveryNumber;
+    String awb;
 
     private ProgressDialog progressDialog;
 
@@ -70,7 +71,7 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         progressDialog.setMessage("Loading...");
 
         deliveryNumber = getIntent().getStringExtra(KeyConstants.INTENT_EXTRA_DELIVERY_NUMBER);
-        String awb = getIntent().getStringExtra(KeyConstants.INTENT_EXTRA_SHIPMENT_AWB);
+         awb = getIntent().getStringExtra(KeyConstants.INTENT_EXTRA_SHIPMENT_AWB);
         deliveryModel = RDApplication.getDeliveryModelByTrackingNumberAndAWB(deliveryNumber, awb);
 
         if (deliveryModel == null) {
@@ -99,7 +100,7 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         imgSign = (ImageView) findViewById(R.id.img_sign_output);
 
         String strtedDeliveryNo = SPrefUtils.getStringPreference(mAppContext, SPrefUtils.STARTED_DELIVERY_NUMBER);
-        if(null != strtedDeliveryNo && strtedDeliveryNo.equals(deliveryNumber)) {
+        if(null != strtedDeliveryNo && strtedDeliveryNo.equals(awb)) {
             relBeforeCallStart.setVisibility(View.GONE);
             relAfterCallStart.setVisibility(View.VISIBLE);
         } else if (deliveryModel.getStatus().equalsIgnoreCase("dispatched")) {
@@ -113,7 +114,7 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String strtedDeliveryNo = SPrefUtils.getStringPreference(mAppContext, SPrefUtils.STARTED_DELIVERY_NUMBER);
-                if(null != strtedDeliveryNo && !strtedDeliveryNo.equals(deliveryNumber)) {
+                if(null != strtedDeliveryNo && !strtedDeliveryNo.equals(awb)) {
                     Toast.makeText(mAppContext, "Please mark current started delivery " + deliveryNumber + " as delivered or not ", Toast.LENGTH_LONG).show();
                 }  else {
                     startDeliveryOnServer(deliveryModel.getAwb());
@@ -211,7 +212,7 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
                         lnrSignRelateButtons.setVisibility(View.VISIBLE);
                         imgSign.setVisibility(View.GONE);
                         showLoader(false);
-                        SPrefUtils.setStringPreference(mAppContext, SPrefUtils.STARTED_DELIVERY_NUMBER, deliveryNumber);
+                        SPrefUtils.setStringPreference(mAppContext, SPrefUtils.STARTED_DELIVERY_NUMBER, awb);
                     }
 
                     @Override
