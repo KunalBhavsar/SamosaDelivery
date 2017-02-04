@@ -37,6 +37,7 @@
                           android:background="@color/grey_dashboard"
                           android:drawableLeft="@drawable/customer"
                           android:drawablePadding="@dimen/_5dp"
+                          android:textColor="@color/black_text"
                           android:gravity="center_vertical"
                           android:paddingLeft="@dimen/_5dp"
                           android:text="Customer"
@@ -48,6 +49,7 @@
                     style="@style/textview_large_medium_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:padding="@dimen/_5dp"
                     android:layout_below="@id/txt_cust"
                     android:textColor="@color/colorPrimary"
                     android:textSize="16sp"/>
@@ -57,12 +59,14 @@
                     style="@style/textview_large_medium_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:padding="@dimen/_5dp"
                     android:layout_below="@+id/txt_tracking_number_and_mode"
                     android:layout_marginTop="@dimen/_5dp"
                     android:textColor="@color/colorPrimary"
                     android:textSize="16sp"/>
 
                 <co.rapiddelivery.views.CustomTextView
+                    android:padding="@dimen/_5dp"
                     android:id="@+id/txt_customer_address"
                     style="@style/textview_medium_small_text"
                     android:layout_width="match_parent"

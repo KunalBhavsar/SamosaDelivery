@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.vision.CameraSource;
@@ -35,7 +36,11 @@ public class PickUpDetailsActivity extends AppCompatActivity implements BarcodeR
 
     private int currentBarcodeReaderStatus = BARCODE_READER_STATUS_CAMERA_CLOSED;
 
-    private CustomTextView txtTempContent;
+    private TextView txtID;
+    private CustomTextView txtCust;
+    private CustomTextView txtPhone;
+    private CustomTextView txtLoc;
+    private CustomTextView txtData;
     private CustomTextView txtBarcodeReading;
 
     private CustomButton btnReadBarcode;
@@ -73,8 +78,19 @@ public class PickUpDetailsActivity extends AppCompatActivity implements BarcodeR
             finish();
         }
 
-        txtTempContent = (CustomTextView) findViewById(R.id.txt_temp);
-        txtTempContent.setText(pickUpModel.getName() + "\n" + pickUpModel.getAddress() + "\n"  + pickUpModel.getPincode());
+        txtID = (TextView) findViewById(R.id.txt_id);
+        txtCust = (CustomTextView) findViewById(R.id.txt_name);
+        txtPhone = (CustomTextView) findViewById(R.id.txt_phone);
+        txtLoc = (CustomTextView) findViewById(R.id.txt_loc);
+        txtData = (CustomTextView) findViewById(R.id.txt_data);
+
+
+        //txtTempContent.setText(pickUpModel.getName() + "\n" + pickUpModel.getAddress() + "\n"  + pickUpModel.getPincode());
+        txtID.setText(pickUpModel.getPickupNumber());
+        txtCust.setText(pickUpModel.getName());
+        txtPhone.setText(pickUpModel.getPhoneNumber());
+        txtLoc.setText(pickUpModel.getAddress() + ", Pincode" + pickUpModel.getPincode());
+        txtData.setText("Expected count is " + pickUpModel.getExpectedCount());
 
         mPreview = (CameraSourcePreview) findViewById(R.id.preview);
         mGraphicOverlay = (GraphicOverlay) findViewById(R.id.overlay);
