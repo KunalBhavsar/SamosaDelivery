@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -46,6 +47,7 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
     private RelativeLayout relAfterCallStart;
     private LinearLayout lnrSignRelateButtons;
     private ImageView imgSign;
+    String deliveryNumber;
 
     private ProgressDialog progressDialog;
 
@@ -67,7 +69,7 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Loading...");
 
-        String deliveryNumber = getIntent().getStringExtra(KeyConstants.INTENT_EXTRA_DELIVERY_NUMBER);
+        deliveryNumber = getIntent().getStringExtra(KeyConstants.INTENT_EXTRA_DELIVERY_NUMBER);
         String awb = getIntent().getStringExtra(KeyConstants.INTENT_EXTRA_SHIPMENT_AWB);
         deliveryModel = RDApplication.getDeliveryModelByTrackingNumberAndAWB(deliveryNumber, awb);
 
@@ -80,10 +82,13 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         relAfterCallStart = (RelativeLayout) findViewById(R.id.rel_after_call_start_content);
         lnrSignRelateButtons = (LinearLayout) findViewById(R.id.lnr_buttons_sing);
 
+        TextView txtCustomer = (TextView) findViewById(R.id.txt_cust);
         CustomTextView txtCustomerName = (CustomTextView) findViewById(R.id.txt_customer_name);
         CustomTextView txtCustomerAddress = (CustomTextView) findViewById(R.id.txt_customer_address);
         CustomTextView txtTrackingNumberAndMode = (CustomTextView) findViewById(R.id.txt_tracking_number_and_mode);
 
+
+        txtCustomer.setText(deliveryNumber);
         txtTrackingNumberAndMode.setText(deliveryModel.getAwb() + " (" + deliveryModel.getMode()+ ")");
         txtCustomerName.setText(deliveryModel.getName());
         txtCustomerAddress.setText(deliveryModel.getAddress1() + " " + deliveryModel.getAddress2() + " - "  + deliveryModel.getPincode());
@@ -93,7 +98,11 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         CustomButton btnFailed = (CustomButton) findViewById(R.id.btn_failed);
         imgSign = (ImageView) findViewById(R.id.img_sign_output);
 
-        if (deliveryModel.getStatus().equalsIgnoreCase("dispatched")) {
+        String strtedDeliveryNo = SPrefUtils.getStringPreference(mAppContext, SPrefUtils.STARTED_DELIVERY_NUMBER);
+        if(null != strtedDeliveryNo && strtedDeliveryNo.equals(deliveryNumber)) {
+            relBeforeCallStart.setVisibility(View.GONE);
+            relAfterCallStart.setVisibility(View.VISIBLE);
+        } else if (deliveryModel.getStatus().equalsIgnoreCase("dispatched")) {
             relBeforeCallStart.setVisibility(View.VISIBLE);
         }
         else {
@@ -103,7 +112,12 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         btnStartDelivery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            startDeliveryOnServer(deliveryModel.getAwb());
+                String strtedDeliveryNo = SPrefUtils.getStringPreference(mAppContext, SPrefUtils.STARTED_DELIVERY_NUMBER);
+                if(null != strtedDeliveryNo && !strtedDeliveryNo.equals(deliveryNumber)) {
+                    Toast.makeText(mAppContext, "Please mark current started delivery " + deliveryNumber + " as delivered or not ", Toast.LENGTH_LONG).show();
+                }  else {
+                    startDeliveryOnServer(deliveryModel.getAwb());
+                }
             }
         });
         btnDelivered.setOnClickListener(new View.OnClickListener() {
@@ -171,6 +185,7 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
                         Toast.makeText(mAppContext, "Delivery status updated..", Toast.LENGTH_SHORT).show();
                         showLoader(false);
                         finish();
+                        SPrefUtils.setStringPreference(mAppContext, SPrefUtils.STARTED_DELIVERY_NUMBER, null);
                     }
 
                     @Override
@@ -196,6 +211,7 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
                         lnrSignRelateButtons.setVisibility(View.VISIBLE);
                         imgSign.setVisibility(View.GONE);
                         showLoader(false);
+                        SPrefUtils.setStringPreference(mAppContext, SPrefUtils.STARTED_DELIVERY_NUMBER, deliveryNumber);
                     }
 
                     @Override

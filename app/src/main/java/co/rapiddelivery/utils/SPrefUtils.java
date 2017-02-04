@@ -10,6 +10,7 @@ import android.text.TextUtils;
  */
 
 public class SPrefUtils {
+    public static String STARTED_DELIVERY_NUMBER = "started_delivery_number";
     public static String LOGIN_STATUS = "login_status";
     public static String LOGGEDIN_USER_DETAILS = "loggedin_user_details";
 
