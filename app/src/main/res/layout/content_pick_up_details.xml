@@ -1,147 +1,229 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
-                                             xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             xmlns:tools="http://schemas.android.com/tools"
-                                             android:layout_width="match_parent"
-                                             android:layout_height="match_parent"
-                                             android:background="@color/grey_e7e6e5"
-                                             android:paddingBottom="@dimen/activity_vertical_margin"
-                                             android:paddingLeft="@dimen/activity_horizontal_margin"
-                                             android:paddingRight="@dimen/activity_horizontal_margin"
-                                             android:paddingTop="@dimen/activity_vertical_margin"
-                                             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                                             tools:context="co.rapiddelivery.src.PickUpDetailsActivity"
-                                             tools:showIn="@layout/activity_pick_up_details" >
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_e7e6e5"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="co.rapiddelivery.src.PickUpDetailsActivity"
+    tools:showIn="@layout/activity_pick_up_details" >
 
-<RelativeLayout android:id="@+id/content_pick_up_details"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-               >
+    <RelativeLayout
+        android:id="@+id/content_pick_up_details"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <android.support.v7.widget.CardView android:id="@+id/rel_alltime_visible_content"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        app:cardCornerRadius="5dp"
-                                        app:cardElevation="8dp">
+        <android.support.v7.widget.CardView
+            android:id="@+id/rel_alltime_visible_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="5dp"
+            app:cardElevation="8dp">
 
 
-        <LinearLayout android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:orientation="vertical">
-
-            <TextView android:id="@+id/txt_id"
-                      android:layout_width="match_parent"
-                      android:layout_height="@dimen/_40dp"
-                      android:layout_marginBottom="@dimen/_5dp"
-                      android:background="@color/grey_777777"
-                      android:drawableLeft="@drawable/ic_truck_pickup"
-                      android:drawablePadding="@dimen/_15dp"
-                      android:gravity="center_vertical"
-                      android:paddingLeft="@dimen/_15dp"
-                      android:textStyle="bold"
-                      android:text="ID"
-                      android:textColor="@color/white"
-                      android:textSize="20sp"/>
-
-            <co.rapiddelivery.views.CustomTextView
-                android:id="@+id/txt_name"
-                style="@style/textview_large_text"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/customer"
-                android:drawablePadding="@dimen/_10dp"
-                android:padding="@dimen/_10dp"
-                android:textSize="16sp"
-                android:text="pick up no. 48545"
-                android:textColor="@color/black_text"/>
+                android:orientation="vertical">
 
-            <co.rapiddelivery.views.CustomTextView
-                android:id="@+id/txt_phone"
-                style="@style/textview_large_text"
+                <TextView
+                    android:id="@+id/txt_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_40dp"
+                    android:layout_marginBottom="@dimen/_5dp"
+                    android:background="@color/grey_777777"
+                    android:drawableLeft="@drawable/ic_truck_pickup"
+                    android:drawablePadding="@dimen/_15dp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/_15dp"
+                    android:textStyle="bold"
+                    android:text="ID"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"/>
+
+                <co.rapiddelivery.views.CustomTextView
+                    android:id="@+id/txt_name"
+                    style="@style/textview_large_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/customer"
+                    android:drawablePadding="@dimen/_10dp"
+                    android:padding="@dimen/_10dp"
+                    android:textSize="16sp"
+                    android:text="pick up no. 48545"
+                    android:textColor="@color/black_text"/>
+
+                <co.rapiddelivery.views.CustomTextView
+                    android:id="@+id/txt_phone"
+                    style="@style/textview_large_text"
+                    android:layout_width="match_parent"
+                    android:textSize="16sp"
+
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_phone"
+                    android:drawablePadding="@dimen/_5dp"
+                    android:padding="@dimen/_10dp"
+                    android:text="pick up no. 48545"
+                    android:textColor="@color/black_text"/>
+
+                <co.rapiddelivery.views.CustomTextView
+                    android:id="@+id/txt_loc"
+                    style="@style/textview_large_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_location"
+                    android:drawablePadding="@dimen/_10dp"
+                    android:padding="@dimen/_10dp"
+                    android:textSize="16sp"
+
+                    android:text="pick up no. 48545"
+                    android:textColor="@color/black_text"/>
+
+                <co.rapiddelivery.views.CustomTextView
+                    android:id="@+id/txt_data"
+                    style="@style/textview_large_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="pick up no. 48545"
+                    android:textColor="@color/grey_777777"
+                    android:textSize="16sp"/>
+
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <RelativeLayout
+            android:id="@+id/rel_camera_options"
+            android:layout_below="@+id/rel_alltime_visible_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <co.rapiddelivery.views.CustomButton
+                android:id="@+id/btn_close_camera"
+                style="@style/button_orange_large_rect"
                 android:layout_width="match_parent"
-                android:textSize="16sp"
-
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_phone"
-                android:drawablePadding="@dimen/_5dp"
-                android:padding="@dimen/_10dp"
-                android:text="pick up no. 48545"
-                android:textColor="@color/black_text"/>
+                android:layout_marginTop="@dimen/_10dp"
+                android:text="Close camera"
+                android:visibility="gone"/>
 
-            <co.rapiddelivery.views.CustomTextView
-                android:id="@+id/txt_loc"
-                style="@style/textview_large_text"
+            <co.rapiddelivery.views.CameraSourcePreview
+                android:id="@+id/preview"
+                android:layout_marginTop="@dimen/_10dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_location"
-                android:drawablePadding="@dimen/_10dp"
-                android:padding="@dimen/_10dp"
-                android:textSize="16sp"
+                android:layout_height="@dimen/_250dp"
+                android:layout_below="@+id/btn_close_camera"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone">
 
-                android:text="pick up no. 48545"
-                android:textColor="@color/black_text"/>
+                <co.rapiddelivery.views.GraphicOverlay
+                    android:id="@+id/overlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
 
-            <co.rapiddelivery.views.CustomTextView
-                android:id="@+id/txt_data"
-                style="@style/textview_large_text"
+            </co.rapiddelivery.views.CameraSourcePreview>
+
+            <LinearLayout
+                android:id="@+id/lnr_buttons_read_barcode"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="pick up no. 48545"
-                android:textColor="@color/grey_777777"
-                android:textSize="16sp"/>
+                android:layout_height="@dimen/_50dp"
+                android:layout_marginTop="@dimen/_10dp"
+                android:orientation="horizontal">
 
+                <co.rapiddelivery.views.CustomButton
+                    android:id="@+id/btn_capture_barcode"
+                    style="@style/button_orange_small_rect"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:text="Capture Barcode"/>
+                <View
+                    android:layout_width="@dimen/_10dp"
+                    android:layout_height="wrap_content"/>
 
+                <co.rapiddelivery.views.CustomButton
+                    android:id="@+id/btn_enter_barcode"
+                    style="@style/button_orange_small_rect"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:text="Enter Barcode"/>
+            </LinearLayout>
+        </RelativeLayout>
+        <LinearLayout
+            android:id="@+id/lnr_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10dp"
+            android:layout_below="@+id/rel_camera_options"
+            android:orientation="horizontal">
+
+            <co.rapiddelivery.views.CustomButton
+                android:id="@+id/btn_picked_up"
+                style="@style/button_green_small_rect"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_40dp"
+                android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="Picked Up"
+                android:textColor="@color/white"/>
+
+            <View
+                android:layout_width="@dimen/_10dp"
+                android:layout_height="wrap_content"/>
+
+            <co.rapiddelivery.views.CustomButton
+                android:id="@+id/btn_failed"
+                style="@style/button_red_small_rect"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_40dp"
+                android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="Failed"
+                android:textColor="@color/white"/>
         </LinearLayout>
 
-    </android.support.v7.widget.CardView>
-
-
-    <co.rapiddelivery.views.CustomTextView
-        android:id="@+id/txt_barcode_reading"
-        style="@style/textview_large_text"
-        android:text=""
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/rel_alltime_visible_content"
-        android:layout_marginTop="@dimen/_10dp"/>
-
-    <co.rapiddelivery.views.CustomButton
-        android:id="@+id/btn_read_barcode"
-        style="@style/button_orange_large_rect"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txt_barcode_reading"
-        android:layout_margin="@dimen/_10dp"
-        android:layout_marginTop="@dimen/_10dp"
-        android:text="Read Barcode"/>
-
-    <co.rapiddelivery.views.CustomButton
-        android:id="@+id/btn_close_camera"
-        style="@style/button_orange_large_rect"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/rel_alltime_visible_content"
-        android:layout_marginTop="@dimen/_10dp"
-        android:text="Close camera"
-        android:visibility="gone"/>
-
-    <co.rapiddelivery.views.CameraSourcePreview
-        android:id="@+id/preview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/btn_close_camera"
-        android:visibility="gone">
-
-        <co.rapiddelivery.views.GraphicOverlay
-            android:id="@+id/overlay"
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_barcodes_scanned"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lnr_buttons"
+            android:layout_marginTop="@dimen/_10dp"
+            app:cardCornerRadius="5dp"
+            app:cardElevation="8dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <co.rapiddelivery.views.CustomTextView
+                    style="@style/textview_large_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/_10dp"
+                    android:padding="@dimen/_10dp"
+                    android:textSize="16sp"
+                    android:text="Barcode Scanned :"
+                    android:textColor="@color/black_text"/>
 
-    </co.rapiddelivery.views.CameraSourcePreview>
+                <co.rapiddelivery.views.CustomTextView
+                    android:id="@+id/txt_barcode_reading"
+                    style="@style/textview_large_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:textColor="@color/grey_777777"
+                    android:textSize="16sp"/>
+            </LinearLayout>
 
-
-</RelativeLayout>
-
-
+        </android.support.v7.widget.CardView>
+    </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

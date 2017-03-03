@@ -100,6 +100,11 @@ public class TabActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
     private void onLogoutClicked() {
         SPrefUtils.setIntegerPreference(mAppContext, SPrefUtils.LOGIN_STATUS, KeyConstants.LOGIN_STATUS_BLANK);
         SPrefUtils.setStringPreference(mAppContext, SPrefUtils.LOGGEDIN_USER_DETAILS, null);
@@ -137,6 +142,8 @@ public class TabActivity extends AppCompatActivity {
         private Fragment fragment;
         private String searchQuery;
         private String filterType;
+
+        private boolean dataLoaded;
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -219,17 +226,6 @@ public class TabActivity extends AppCompatActivity {
             return rootView;
         }
 
-        @Override
-        public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
-            if (sectionNumber == 1) {
-                getDRListFromServer();
-            }
-            else if (sectionNumber == 2) {
-                getPickUpListFromServer();
-            }
-        }
-
         @Subscribe(threadMode = ThreadMode.MAIN)
         public void onDeliveryDataUpdatedEvent(RDApplication.DeliveryDataUpdatedEvent event) {
             if (sectionNumber == 1) {
@@ -291,7 +287,7 @@ public class TabActivity extends AppCompatActivity {
         }
 
         private void onFilterClick() {
-            String[] type = new String[]{"ALL", "PREPAID", "COD", "REVERSE"};
+            String[] type = new String[]{"Pending Shipments", "All Shipments", "Done Shipments"};
             List<String> filterList = new ArrayList<>();
             filterList.addAll(Arrays.asList(type));
             ActivityUtils.showFilterDialog(getActivity(), filterList, new OnDialogClickListener() {
@@ -313,10 +309,10 @@ public class TabActivity extends AppCompatActivity {
             super.onResume();
             EventBus.getDefault().register(this);
             if (sectionNumber == 1) {
-                deliveryAdapter.setDeliveryList(filterDeliveries());
+                getDRListFromServer();
             }
             if (sectionNumber == 2) {
-                pickUpAdapter.setPickUpModelList(filterPickups());
+                getPickUpListFromServer();
             }
         }
 
@@ -357,6 +353,7 @@ public class TabActivity extends AppCompatActivity {
                                                     deliveryModel = new DeliveryModel();
                                                     deliveryModel.setPincode(shipmentModel.getPincode());
                                                     deliveryModel.setName(shipmentModel.getName());
+                                                    deliveryModel.setPhone(shipmentModel.getPhone());
                                                     deliveryModel.setAddress1(shipmentModel.getAddress_1());
                                                     deliveryModel.setAddress2(shipmentModel.getAddress_2());
                                                     deliveryModel.setAwb(shipmentModel.getAwb());
@@ -381,6 +378,7 @@ public class TabActivity extends AppCompatActivity {
                                             deliveryModels.addAll(nonDispatchedDeliveryModels);
                                             showProgress(false);
                                             RDApplication.setDeliveryModels(deliveryModels);
+                                            dataLoaded = true;
                                             break;
                                         default:
                                             showProgress(false);
@@ -405,8 +403,13 @@ public class TabActivity extends AppCompatActivity {
                         });
             }
             else {
-                Toast.makeText(mContext, "Check your internet connection", Toast.LENGTH_SHORT).show();
-                showRetryOption();
+                if (!dataLoaded) {
+                    Toast.makeText(mContext, "Check your internet connection", Toast.LENGTH_SHORT).show();
+                    showRetryOption();
+                }
+                else {
+                    deliveryAdapter.setDeliveryList(filterDeliveries());
+                }
             }
         }
 
@@ -456,6 +459,7 @@ public class TabActivity extends AppCompatActivity {
                                             manifestedPickUpModels.addAll(otherPickUpModels);
                                             showProgress(false);
                                             RDApplication.setPickupModels(manifestedPickUpModels);
+                                            dataLoaded = true;
                                             break;
                                         default:
                                             showProgress(false);
@@ -480,8 +484,13 @@ public class TabActivity extends AppCompatActivity {
                         });
             }
             else {
-                Toast.makeText(mContext, "Check your internet connection", Toast.LENGTH_SHORT).show();
-                showRetryOption();
+                if (!dataLoaded) {
+                    Toast.makeText(mContext, "Check your internet connection", Toast.LENGTH_SHORT).show();
+                    showRetryOption();
+                }
+                else {
+                    pickUpAdapter.setPickUpModelList(filterPickups());
+                }
             }
         }
 
@@ -532,7 +541,13 @@ public class TabActivity extends AppCompatActivity {
             List<DeliveryModel> models = RDApplication.getDeliveryModels();
             for (DeliveryModel model : models) {
                 if (TextUtils.isEmpty(lowerCaseQuery) || model.getName().toLowerCase().contains(lowerCaseQuery)) {
-                    if (TextUtils.isEmpty(lowerCaseFilterType) || lowerCaseFilterType.equalsIgnoreCase("all") || model.getMode().equalsIgnoreCase(lowerCaseFilterType)) {
+                    if (TextUtils.isEmpty(lowerCaseFilterType) || lowerCaseFilterType.contains("all")) {
+                        filteredModelList.add(model);
+                    }
+                    else if (lowerCaseFilterType.contains("done") && model.getStatus().equalsIgnoreCase("delivered")) {
+                        filteredModelList.add(model);
+                    }
+                    else if (lowerCaseFilterType.contains("pending") && (model.getStatus().equalsIgnoreCase("pending") || model.getStatus().equalsIgnoreCase("dispatched"))) {
                         filteredModelList.add(model);
                     }
                 }

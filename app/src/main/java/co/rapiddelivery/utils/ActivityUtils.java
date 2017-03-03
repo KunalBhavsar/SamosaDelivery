@@ -2,19 +2,25 @@ package co.rapiddelivery.utils;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
+import java.util.Calendar;
 import java.util.List;
 
 import co.rapiddelivery.intf.OnDialogClickListener;
@@ -80,5 +86,5 @@ public class ActivityUtils {
         simpleDialogAdapter.setData(filterList);
         dialog.show();
     }
-
 }
+

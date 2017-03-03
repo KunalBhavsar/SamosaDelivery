@@ -66,8 +66,8 @@ public class RDApplication extends Application {
         if (deliveryModels == null) {
             deliveryModels = new ArrayList<>();
         }
-        EventBus.getDefault().post(new DeliveryDataUpdatedEvent(deliveryModels));
         RDApplication.deliveryModels = deliveryModels;
+        EventBus.getDefault().post(new DeliveryDataUpdatedEvent(deliveryModels));
     }
 
     public static LoginResponse getAppOwnerData() {

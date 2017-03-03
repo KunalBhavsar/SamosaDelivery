@@ -1,48 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/grey_e7e6e5"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:context="co.rapiddelivery.src.DeliveryDetailsActivity"
-            tools:showIn="@layout/activity_delivery_details">
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_e7e6e5"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="co.rapiddelivery.src.DeliveryDetailsActivity"
+    tools:showIn="@layout/activity_delivery_details">
 
     <RelativeLayout
         android:id="@+id/content_delivery_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.CardView android:layout_width="match_parent"
-                                            app:cardElevation="5dp"
-                                            app:cardCornerRadius="5dp"
-                                            android:id="@+id/rel_alltime_visible_content"
-                                            android:layout_height="wrap_content">
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            app:cardElevation="5dp"
+            app:cardCornerRadius="5dp"
+            android:id="@+id/rel_alltime_visible_content"
+            android:layout_height="wrap_content">
 
             <RelativeLayout
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 >
 
-                <TextView android:id="@+id/txt_cust"
-                          android:layout_width="match_parent"
-                          android:layout_height="@dimen/_40dp"
-                          android:layout_marginBottom="@dimen/_5dp"
-                          android:background="@color/grey_777777"
-                          android:drawableLeft="@drawable/ic_truck_pickup"
-                          android:drawablePadding="@dimen/_15dp"
-                          android:gravity="center_vertical"
-                          android:paddingLeft="@dimen/_15dp"
-                          android:textStyle="bold"
-                          android:text="ID"
-                          android:textColor="@color/white"
-                          android:textSize="20sp"/>
+                <TextView
+                    android:id="@+id/txt_cust"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_40dp"
+                    android:layout_marginBottom="@dimen/_5dp"
+                    android:background="@color/grey_777777"
+                    android:drawableLeft="@drawable/ic_truck_pickup"
+                    android:drawablePadding="@dimen/_15dp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/_15dp"
+                    android:textStyle="bold"
+                    android:text="ID"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"/>
 
 
                 <co.rapiddelivery.views.CustomTextView
@@ -71,6 +73,18 @@
                     android:textSize="16sp"/>
 
                 <co.rapiddelivery.views.CustomTextView
+                    android:id="@+id/txt_phone"
+                    style="@style/textview_medium_small_text"
+                    android:layout_width="match_parent"
+                    android:textSize="16sp"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_phone"
+                    android:layout_below="@+id/txt_customer_name"
+                    android:drawablePadding="@dimen/_5dp"
+                    android:padding="@dimen/_10dp"
+                    android:textColor="@color/colorPrimary"/>
+
+                <co.rapiddelivery.views.CustomTextView
                     android:padding="@dimen/_5dp"
                     android:id="@+id/txt_customer_address"
                     style="@style/textview_medium_small_text"
@@ -78,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:drawablePadding="@dimen/_15dp"
                     android:drawableLeft="@drawable/ic_location"
-                    android:layout_below="@+id/txt_customer_name"
+                    android:layout_below="@+id/txt_phone"
                     android:layout_marginTop="@dimen/_5dp"
                     android:textColor="@color/colorPrimary"
                     android:textSize="16sp"/>
@@ -172,11 +186,22 @@
                     android:visibility="gone"/>
             </RelativeLayout>
 
+            <co.rapiddelivery.views.CustomButton
+                android:id="@+id/btn_cancel"
+                style="@style/button_red_small_rect"
+                android:layout_below="@+id/rel_sign"
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/_10dp"
+                android:layout_height="@dimen/_40dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="Cancel Delivery"
+                android:textColor="@color/white"/>
+
             <LinearLayout
                 android:id="@+id/lnr_buttons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/rel_sign"
+                android:layout_below="@+id/btn_cancel"
                 android:layout_marginTop="@dimen/_10dp"
                 android:orientation="horizontal">
 

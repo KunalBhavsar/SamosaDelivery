@@ -12,6 +12,7 @@ public class DeliveryModel {
     private String status;
     private String address1;
     private String address2;
+    private String phone;
     private String pincode;
     private String value;
     private String flow;
@@ -131,5 +132,13 @@ public class DeliveryModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

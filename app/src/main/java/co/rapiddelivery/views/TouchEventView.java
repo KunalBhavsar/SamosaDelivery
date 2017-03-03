@@ -11,14 +11,16 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import co.rapiddelivery.src.DeliveryDetailsActivity;
 
 /**
  * Created by Kunal on 21/12/16.
  */
 
 public class TouchEventView extends View {
+
+    private static final String TAG = DeliveryDetailsActivity.class.getSimpleName();
+
     //drawing path
     private Path drawPath;
 
@@ -103,6 +105,7 @@ public class TouchEventView extends View {
     }
 
     public Bitmap getBitmapDrawing() {
+        Log.i(TAG, "Drop path object : " + drawPath.isEmpty());
        return canvasBitmap;
     }
 }
